@@ -1,0 +1,84 @@
+## YAML Template.
+---
+spring:
+  cloud:
+    gateway:
+      #mvc:  
+        routes:       
+          - id: service_a
+            uri: lb://service-a
+            predicates:
+              - Path=/api/v1/service-a/**
+            filters:
+              - RewritePath=/api/v1/service-a/(?<remaining>.*), /${remaining}
+              
+          - id: auth_login
+            uri: lb://auth-server
+            predicates:
+              - Path=/login
+            filters:
+              - RewriteLocationResponseHeader=ALWAYS_STRIP, Location, , 
+          
+          - id: auth_authorize
+            uri: lb://auth-server
+            predicates:
+              - Path=/oauth2/authorize/**
+            filters:
+              - name: ModifyLocationHeader
+                args:
+                  path: /login
+          
+          - id: auth_token
+            uri: http://localhost:9000
+            predicates:
+              - Path=/oauth2/token/**
+            filters:
+              - name: ModifyLocationHeader
+                args:
+                  path: /login
+        
+server:
+  port: 8080
+
+---
+spring:
+  config.activate.on-profile: docker
+  cloud:
+    gateway:
+      #mvc:  
+        routes:       
+          - id: service_a
+            uri: lb://service-a
+            predicates:
+              - Path=/api/v1/service-a/**
+            filters:
+              - RewritePath=/api/v1/service-a/(?<remaining>.*), /${remaining}
+              
+          - id: auth_login
+            uri: lb://auth-server
+            predicates:
+              - Path=/login
+            filters:
+              - RewriteLocationResponseHeader=ALWAYS_STRIP, Location, , 
+          
+          - id: auth_authorize
+            uri: lb://auth-server
+            predicates:
+              - Path=/oauth2/authorize/**
+            filters:
+              - name: ModifyLocationHeader
+                args:
+                  path: /login
+          
+          - id: auth_token
+            uri: http://auth-server:8080
+            predicates:
+              - Path=/oauth2/token/**
+            filters:
+              - name: ModifyLocationHeader
+                args:
+                  path: /login
+
+
+server:
+  port: 8080

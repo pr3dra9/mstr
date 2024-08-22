@@ -1,0 +1,34 @@
+## YAML Template.
+---
+spring:
+  application.name: service-a
+  config.import: "optional:configserver:"
+  cloud:
+    config.uri: http://localhost:8888
+#    function:
+#      definition: consumeMessage;transformCreateMessage;transformUpdateMessage;transformDeleteMessage;
+    stream:
+      default-binder: kafka
+      kafka.binder:
+        brokers: localhost
+        defaultBrokerPort: 9093
+      bindings:
+        message-out-0:
+          destination: message
+          #content-type: application/json         
+
+  kafka:
+    host: localhost
+    port: 9093
+    
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9000
+          #jwk-set-uri: http://localhost:9000/.well-known/openid-configuration
+
+---
+spring:
+  config.activate.on-profile: docker
+  cloud.config.uri: http://config:8080

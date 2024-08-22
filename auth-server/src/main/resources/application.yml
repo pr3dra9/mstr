@@ -1,0 +1,11 @@
+## YAML Template.
+---
+spring:
+  application.name: auth-server
+  config.import: "optional:configserver:"
+  cloud.config.uri: http://localhost:8888
+
+---
+spring:
+  config.activate.on-profile: docker
+  cloud.config.uri: http://config:8080

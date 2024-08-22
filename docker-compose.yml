@@ -1,0 +1,121 @@
+## YAML Template.
+---
+services:
+    config:
+        container_name: "mstr-config"
+        #ports:
+        #  - "8888:8080"
+        image: "config:0.0.1"
+        environment: 
+          - SPRING_PROFILES_ACTIVE=docker,native
+        healthcheck:
+          test: ["CMD-SHELL", "curl -f http://config:8080/actuator/health || exit 1"]
+          timeout: 10s
+          retries: 10
+    discovery:
+        container_name: "mstr-discovery"
+        depends_on:
+            config: 
+                condition: service_healthy
+        #ports:
+        #  - "8761:8080"
+        image: "discovery:0.0.1"
+        environment: 
+          - SPRING_PROFILES_ACTIVE=docker
+        healthcheck:
+          test: ["CMD-SHELL", "curl -f http://discovery:8080/actuator/health || exit 1"]
+          timeout: 10s
+          retries: 10
+    auth-server:
+        container_name: "mstr-auth-server"
+        depends_on:
+            config: 
+                condition: service_healthy
+            auth-db:
+                condition: service_healthy
+            discovery: 
+                condition: service_healthy
+        #ports:
+        #  - "9000:8080"
+        image: "auth-server:0.0.1"
+        environment: 
+          - SPRING_PROFILES_ACTIVE=docker
+        healthcheck:
+          test: ["CMD-SHELL", "curl -f http://config:8080/actuator/health || exit 1"]
+          timeout: 10s
+          retries: 10
+    auth-db:
+        container_name: "mstr-auth-db"
+        image: "mariadb"
+        ports:
+            - "3307:3306"
+        restart: unless-stopped
+        environment: 
+            - MARIADB_AUTO_UPGRADE=1
+            - MARIADB_USER=user
+            - MARIADB_PASSWORD=user
+            - MARIADB_ROOT_PASSWORD=root
+        command: --init-file /data/application/init.sql
+        volumes:
+            - ./init-auth-db.sql:/data/application/init.sql
+            - auth-data:/var/lib/mysql
+        healthcheck:
+            test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
+            timeout: 10s
+            retries: 5
+    serviceadb:
+        container_name: "mstr-serviceadb"
+        image: "mariadb:latest"
+        #ports:
+        #    - "3306:3306"
+        restart: unless-stopped
+        environment: 
+            - MARIADB_DATABASE=serviceadb2
+            - MARIADB_AUTO_UPGRADE=1
+            - MARIADB_USER=user
+            - MARIADB_PASSWORD=user
+            - MARIADB_ROOT_PASSWORD=root
+        command: --init-file /data/application/init.sql
+        volumes:
+            - ./init.sql:/data/application/init.sql
+            - db-data:/var/lib/mysql
+        healthcheck:
+            test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
+            timeout: 10s
+            retries: 5
+    service-a:
+        #container_name: "mstr-servicea"
+        depends_on:
+            serviceadb:
+                condition: service_healthy
+            config: 
+                condition: service_healthy
+            discovery: 
+                condition: service_healthy
+        image: "service-a:0.0.1"
+        #ports:
+        #  - "81:8080"
+        restart: unless-stopped
+        environment: 
+          - SPRING_PROFILES_ACTIVE=docker
+        healthcheck:
+          test: ["CMD-SHELL", "curl -f http://service-a:8080/actuator/health || exit 1"]
+          timeout: 10s
+          retries: 10
+    gateway:
+        container_name: "mstr-gateway"
+        depends_on:
+            config: 
+                condition: service_healthy
+            discovery:
+                condition: service_healthy
+            auth-server:
+                condition: service_healthy
+        ports:
+          - "8080:8080"
+        image: "gateway:0.0.1"
+        environment: 
+          - SPRING_PROFILES_ACTIVE=docker
+volumes:
+    db-data:
+    auth-data:

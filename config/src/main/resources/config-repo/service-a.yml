@@ -1,0 +1,32 @@
+## YAML Template.
+---
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/serviceadb2
+    port: '3306'
+    username: root
+    password: root
+  jpa:
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: 'true'
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: update
+    show-sql: 'true'
+
+server:
+  port: 81
+
+---
+spring:
+  config:
+    activate.on-profile: docker
+  datasource:
+    url: jdbc:mysql://serviceadb/serviceadb2
+
+server:
+  port: 8080

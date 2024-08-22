@@ -1,0 +1,23 @@
+## YAML Template.
+---
+spring:
+  application.name: config
+  profiles.active: native
+  cloud.config:
+      server:
+        bootstrap: true
+        #git.uri: https://github.com/pr3dra9/config-repo
+        native.search-locations: file:./src/main/resources/config-repo
+        uri: http://localhost:8888
+        
+server.port: 8888
+
+---
+spring:
+  config.activate.on-profile: docker
+  cloud.config:
+      server:
+        native.search-locations: file:/app/config-repo
+        uri: http://config:8080
+
+server.port: 8080

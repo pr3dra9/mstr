@@ -1,0 +1,15 @@
+## YAML Template.
+---
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+server:
+  port: 8761
+
+---
+spring.config.activate.on-profile: docker
+
+server:
+  port: 8080

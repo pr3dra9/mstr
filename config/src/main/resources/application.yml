@@ -1,0 +1,8 @@
+## YAML Template.
+---
+spring:
+  application.name: config
+
+---
+spring:
+  config.activate.on-profile: docker
