@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 import rs.ac.bg.fon.mas.scheduler.model.MatchEvent;
@@ -28,6 +29,7 @@ import rs.ac.bg.fon.mas.scheduler.model.enums.MatchStatus;
  */
 @SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 public class MatchEventRepositoryTest {
 
     @Autowired
@@ -55,7 +57,7 @@ public class MatchEventRepositoryTest {
         Team chelsea = new Team(0L, "Chelsea", "che.png", "England", "London", "Stamford Bridge");
         chelseaEntity = teamRepo.save(chelsea);
 
-        League league = new League(0L, "England", 1, "2024-25", "Premier League", "pl.png", 38, List.of(arsenalEntity, chelseaEntity));
+        League league = new League(0L, "England", 1, "2024-25", "Premier League", "pl.png", 38, Set.of(arsenalEntity, chelseaEntity));
         leagueEntity = leagueRepo.save(league);
 
         Match match = new Match(0L, leagueEntity, arsenalEntity, chelseaEntity, 1, LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.SCHEDULED);

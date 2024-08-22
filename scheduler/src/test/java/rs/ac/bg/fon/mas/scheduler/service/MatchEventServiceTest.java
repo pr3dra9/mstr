@@ -7,6 +7,7 @@ package rs.ac.bg.fon.mas.scheduler.service;
 import jakarta.persistence.EntityExistsException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.times;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 import rs.ac.bg.fon.mas.scheduler.model.MatchEvent;
@@ -30,6 +32,7 @@ import rs.ac.bg.fon.mas.scheduler.repository.MatchEventRepository;
  * @author Predrag
  */
 @SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
+@ActiveProfiles("test")
 public class MatchEventServiceTest {
     
     @Autowired
@@ -55,7 +58,7 @@ public class MatchEventServiceTest {
     public void setUp() {
         arsenalEntity = new Team(1L, "Arsenal", "ars.png", "England", "London", "Etihad");
         chelseaEntity = new Team(2L, "Chelea", "che.png", "England", "London", "Stamford Bridge");
-        leagueEntity = new League(1L, "England", 1, "2024-25", "Premier League", "pl.png", 38, List.of(arsenalEntity, chelseaEntity));
+        leagueEntity = new League(1L, "England", 1, "2024-25", "Premier League", "pl.png", 38, Set.of(arsenalEntity, chelseaEntity));
 
         entityMatch = new Match(1L, leagueEntity, arsenalEntity, chelseaEntity, 1, 
                 LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.SCHEDULED);

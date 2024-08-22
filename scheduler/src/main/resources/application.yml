@@ -1,32 +1,33 @@
+## YAML Template.
+---
 spring:
   application.name: scheduler
-  config.import: "optional:configserver:"
-  cloud:
-    config.uri: http://localhost:8888
-#    function:
-#      definition: consumeMessage;transformCreateMessage;transformUpdateMessage;transformDeleteMessage;
-    stream:
-      default-binder: kafka
-      kafka.binder:
-        brokers: localhost
-        defaultBrokerPort: 9093
-      bindings:
-        message-out-0:
-          destination: message
-          #content-type: application/json         
-
-  kafka:
-    host: localhost
-    port: 9093
-    
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://localhost:9000
-          #jwk-set-uri: http://localhost:9000/.well-known/openid-configuration
+  datasource:
+    url: jdbc:mysql://localhost/schedulerdb
+    port: '3306'
+    username: root
+    password: root
+  jpa:
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: 'true'
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: update
+    show-sql: 'true'
 
 ---
 spring:
-  config.activate.on-profile: docker
-  cloud.config.uri: http://config:8080
+  config.activate.on-profile: test
+  datasource:
+    url: jdbc:hsqldb:mem:testdb
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
+    username: sa
+    password:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.HSQLDialect

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
 
 /**
@@ -19,6 +20,7 @@ import rs.ac.bg.fon.mas.scheduler.model.Team;
  */
 @SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 public class TeamRepositoryTest {
     
     @Autowired

@@ -7,6 +7,7 @@ package rs.ac.bg.fon.mas.scheduler.repository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
@@ -27,6 +29,7 @@ import rs.ac.bg.fon.mas.scheduler.model.enums.MatchStatus;
  */
 @SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 public class MatchRepositoryTest {
 
     @Autowired
@@ -51,7 +54,7 @@ public class MatchRepositoryTest {
         Team chelsea = new Team(0L, "Chelsea", "che.png", "England", "London", "Stamford Bridge");
         chelseaEntity = teamRepo.save(chelsea);
 
-        League league = new League(0L, "England", 1, "2024-25", "Premier League", "pl.png", 38, List.of(arsenalEntity, chelseaEntity));
+        League league = new League(0L, "England", 1, "2024-25", "Premier League", "pl.png", 38, Set.of(arsenalEntity, chelseaEntity));
         leagueEntity = leagueRepo.save(league);
 
     }

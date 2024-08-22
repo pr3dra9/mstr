@@ -4,10 +4,12 @@
  */
 package rs.ac.bg.fon.mas.scheduler.service;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import static org.mockito.Mockito.times;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
 import rs.ac.bg.fon.mas.scheduler.repository.LeagueRepository;
@@ -29,6 +32,7 @@ import rs.ac.bg.fon.mas.scheduler.repository.TeamRepository;
  */
 @SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 public class LeagueServiceTest {
     
     @MockBean
@@ -48,11 +52,11 @@ public class LeagueServiceTest {
     
     @BeforeAll
     public void setUp() {
-        league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, List.of());
-        entityLeague = new League(1L, "England", 1, "2024-25", "Premier League", "pl.png", 38, new ArrayList<>());
-        editedLeague = new League(1L, "England_edited", 2, "2024-25_edited", "Premier League_edited", "pl_edited.png", 39, List.of());
+        league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, Set.of());
+        entityLeague = new League(1L, "England", 1, "2024-25", "Premier League", "pl.png", 38, new HashSet<>());
+        editedLeague = new League(1L, "England_edited", 2, "2024-25_edited", "Premier League_edited", "pl_edited.png", 39, Set.of());
         entityTeam = new Team(1L, "Arsenal", "ars.png", "England", "London", "Etihad");        
-        entityLeagueOneTeam = new League(1L, "England", 1, "2024-25", "Premier League", "pl.png", 38, List.of(entityTeam));
+        entityLeagueOneTeam = new League(1L, "England", 1, "2024-25", "Premier League", "pl.png", 38, Set.of(entityTeam));
     }
 
     @Test
@@ -116,7 +120,7 @@ public class LeagueServiceTest {
         Mockito.when(leagueRepository.findByRegionAndSeasonAndNameAndRank(league.getRegion(), league.getSeason(), league.getName(), 1))
                 .thenReturn(Optional.of(entityLeague));
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        Assertions.assertThrows(EntityExistsException.class, () -> {
             leagueService.create(league);
         });
         

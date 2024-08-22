@@ -23,7 +23,7 @@ import rs.ac.bg.fon.mas.scheduler.model.enums.MatchStatus;
  * @author Predrag
  */
 @Entity
-@Table(name = "match")
+@Table(name = "matches")
 public class Match {
 
     public Match() {

@@ -4,6 +4,7 @@
  */
 package rs.ac.bg.fon.mas.scheduler.service;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,11 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
 import rs.ac.bg.fon.mas.scheduler.repository.TeamRepository;
 
@@ -26,6 +29,7 @@ import rs.ac.bg.fon.mas.scheduler.repository.TeamRepository;
  * @author Predrag
  */
 @SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
+@ActiveProfiles("test")
 public class TeamServiceTest {
     
     @Autowired
@@ -68,11 +72,12 @@ public class TeamServiceTest {
         when(mockRepo.findByNameAndCountryAndCity(team.getName(), team.getCountry(), team.getCity()))
                 .thenReturn(Optional.of(entityTeam));
         
-        assertThrows(IllegalStateException.class, () -> {
+        assertThrows(EntityExistsException.class, () -> {
             service.save(team);
         });
         
         verify(mockRepo).findByNameAndCountryAndCity(team.getName(), team.getCountry(), team.getCity());
+        verify(mockRepo, times(0)).save(team);
         
     }
     

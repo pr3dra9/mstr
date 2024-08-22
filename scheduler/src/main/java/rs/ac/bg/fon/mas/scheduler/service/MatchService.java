@@ -18,8 +18,6 @@ public interface MatchService {
     Match getById(Long matchId);
     List<Match> getAllForPeriod(LocalDateTime startDateTime, LocalDateTime endDateTime);
     List<Match> getByIds(List<Long> ids);
-    
     Match update(Match match);
     void delete(Match match);
-
 }

@@ -4,6 +4,7 @@
  */
 package rs.ac.bg.fon.mas.scheduler.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -14,8 +15,8 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  *
@@ -28,7 +29,7 @@ public class League {
     public League() {
     }
 
-    public League(String region, Integer rank, String season, String name, String logo, Integer rounds, List<Team> teams) {
+    public League(String region, Integer rank, String season, String name, String logo, Integer rounds, Set<Team> teams) {
         this.region = region;
         this.rank = rank;
         this.season = season;
@@ -38,7 +39,7 @@ public class League {
         this.teams = teams;
     }
     
-    public League(Long id, String region, Integer rank, String season, String name, String logo, Integer rounds, List<Team> teams) {
+    public League(Long id, String region, Integer rank, String season, String name, String logo, Integer rounds, Set<Team> teams) {
         this.id = id;
         this.region = region;
         this.rank = rank;
@@ -56,6 +57,7 @@ public class League {
     private String region;
     
     @Min(value = 1)
+    @Column(name = "rank_value")
     private Integer rank;
     
     private String season;
@@ -70,9 +72,9 @@ public class League {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
       name = "league_team", 
-      joinColumns = @JoinColumn(name = "league_id"), 
-      inverseJoinColumns = @JoinColumn(name = "team_id"))
-    private List<Team> teams;
+      joinColumns = @JoinColumn(name = "league_fk"), 
+      inverseJoinColumns = @JoinColumn(name = "team_fk"))
+    private Set<Team> teams;
 
     public Long getId() {
         return id;
@@ -130,11 +132,11 @@ public class League {
         this.rounds = rounds;
     }
 
-    public List<Team> getTeams() {
+    public Set<Team> getTeams() {
         return teams;
     }
 
-    public void setTeams(List<Team> teams) {
+    public void setTeams(Set<Team> teams) {
         this.teams = teams;
     }
 

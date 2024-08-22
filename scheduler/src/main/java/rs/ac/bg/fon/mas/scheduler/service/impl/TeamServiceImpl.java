@@ -4,6 +4,7 @@
  */
 package rs.ac.bg.fon.mas.scheduler.service.impl;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
@@ -28,7 +29,7 @@ public class TeamServiceImpl implements TeamService{
         Team searchedTeam = teamRepo.findByNameAndCountryAndCity(team.getName(), team.getCountry(), team.getCity())
                 .orElse(null);
         if (searchedTeam != null) {
-            throw new IllegalStateException("Team with name " + team.getName() + " in " + team.getCity()+ ", " + team.getCountry() + " already exists.");
+            throw new EntityExistsException("Team with name " + team.getName() + " in " + team.getCity()+ ", " + team.getCountry() + " already exists.");
         }
         Team savedTeam = teamRepo.save(team);
         return savedTeam;

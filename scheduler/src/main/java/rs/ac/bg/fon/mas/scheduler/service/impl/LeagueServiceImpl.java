@@ -4,8 +4,8 @@
  */
 package rs.ac.bg.fon.mas.scheduler.service.impl;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.ws.rs.NotFoundException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,7 +46,7 @@ public class LeagueServiceImpl implements LeagueService {
                 .orElse(null);
         
         if (entityLeague != null) {
-            throw new IllegalArgumentException("Entity exists!");
+            throw new EntityExistsException("Entity exists!");
         }
         
         return leagueRepository.save(league);
@@ -66,10 +66,10 @@ public class LeagueServiceImpl implements LeagueService {
     @Override
     public League addTeam(Long leagueId, Team team) {
         League entityLeague = leagueRepository.findById(leagueId)
-                .orElseThrow(()-> new NotFoundException("League entity does not exists!"));
+                .orElseThrow(()-> new EntityNotFoundException("League entity does not exists!"));
         
         Team entityTeam = teamRepository.findById(team.getId())
-                .orElseThrow(()-> new NotFoundException("Team entity does not exists!"));
+                .orElseThrow(()-> new EntityNotFoundException("Team entity does not exists!"));
         
         boolean conttains = entityLeague.getTeams().contains(entityTeam);
         if (conttains) {
@@ -82,10 +82,10 @@ public class LeagueServiceImpl implements LeagueService {
     @Override
     public League addTeam(Long leagueId, Long teamId) {
         League entityLeague = leagueRepository.findById(leagueId)
-                .orElseThrow(()-> new NotFoundException("League entity does not exists!"));
+                .orElseThrow(()-> new EntityNotFoundException("League entity does not exists!"));
         
         Team entityTeam = teamRepository.findById(teamId)
-                .orElseThrow(()-> new NotFoundException("Team entity does not exists!"));
+                .orElseThrow(()-> new EntityNotFoundException("Team entity does not exists!"));
         
         boolean conttains = entityLeague.getTeams().contains(entityTeam);
         if (conttains) {

@@ -4,8 +4,7 @@
  */
 package rs.ac.bg.fon.mas.scheduler.repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
 
@@ -26,6 +26,7 @@ import rs.ac.bg.fon.mas.scheduler.model.Team;
 
 @SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 public class LeagueRepositoryTest {
     
     @Autowired
@@ -54,7 +55,7 @@ public class LeagueRepositoryTest {
 
     @Test
     public void testLeagueSave_withTeams() {        
-        League league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, List.of(arsenalEntity, chelseaEntity));
+        League league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, Set.of(arsenalEntity, chelseaEntity));
         League savedLeague = null;
         try{
             savedLeague = leagueRepo.save(league);
@@ -76,7 +77,7 @@ public class LeagueRepositoryTest {
     
     @Test
     public void testLeagueRead_withTeams() {        
-        League league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, List.of(arsenalEntity, chelseaEntity));
+        League league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, Set.of(arsenalEntity, chelseaEntity));
         League savedLeague = null;
         try{
             savedLeague = leagueRepo.save(league);
@@ -100,7 +101,7 @@ public class LeagueRepositoryTest {
         
     @Test
     public void testLeagueSave_withOutTeams() {        
-        League league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, List.of());
+        League league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, Set.of());
         League savedLeague = null;
         try{
             savedLeague = leagueRepo.save(league);
@@ -122,7 +123,7 @@ public class LeagueRepositoryTest {
     
     @Test
     public void testLeagueEdit() {        
-        League league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, new ArrayList<>());
+        League league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, new HashSet<>());
         League savedLeague = null;
         try{
             savedLeague = leagueRepo.save(league);
@@ -154,7 +155,7 @@ public class LeagueRepositoryTest {
     
     @Test
     public void testLeagueDelete() {        
-        League league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, List.of());
+        League league = new League("England", 1, "2024-25", "Premier League", "pl.png", 38, Set.of());
         League savedLeague = null;
         try{
             savedLeague = leagueRepo.save(league);
