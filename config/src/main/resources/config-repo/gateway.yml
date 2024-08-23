@@ -6,11 +6,11 @@ spring:
       #mvc:  
         routes:       
           - id: service_a
-            uri: lb://service-a
+            uri: lb://scheduler
             predicates:
-              - Path=/api/v1/service-a/**
+              - Path=/api/v1/scheduler/**
             filters:
-              - RewritePath=/api/v1/service-a/(?<remaining>.*), /${remaining}
+              - RewritePath=/api/v1/scheduler/(?<remaining>.*), /${remaining}
               
           - id: auth_login
             uri: lb://auth-server

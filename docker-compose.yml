@@ -63,43 +63,121 @@ services:
             test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
             timeout: 10s
             retries: 5
-    serviceadb:
-        container_name: "mstr-serviceadb"
+
+    zookeeper:
+        container_name: "mstr-zookeeper"
+        image: "wurstmeister/zookeeper:latest"
+        ports:
+        - "2181:2181"
+    kafka:
+        container_name: "mstr-kafka"
+        depends_on:
+            - zookeeper
+        image: "wurstmeister/kafka:latest"
+        ports:
+            - 9092:9092
+            - 9093:9093
+        environment:
+            KAFKA_ADVERTISED_HOST_NAME: kafka
+            KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9093
+            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+            KAFKA_LISTENERS: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:9093
+            KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+            #KAFKA_CREATE_TOPICS: "a2CreateRequest:1:1,a2CreateResponse:1:1,a2UpdateRequest:1:1,a2UpdateResponse:1:1,a2DeleteRequest:1:1,a2DeleteResponse:1:1"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+    akhq:
+        container_name: "mstr-akhq"
+        depends_on:
+            - kafka
+        image: "tchiotludo/akhq:latest"
+        ports:
+            - 8081:8080
+        environment:
+            AKHQ_CONFIGURATION: |
+                akhq:
+                    connections:
+                        kafka-cluster:
+                            properties:
+                                bootstrap.servers: 'kafka:9092' 
+
+    schedulerdb:
+        container_name: "mstr-scheduler-db"
         image: "mariadb:latest"
-        #ports:
-        #    - "3306:3306"
+        ports:
+            - "3308:3306"
         restart: unless-stopped
         environment: 
-            - MARIADB_DATABASE=serviceadb2
+            - MARIADB_DATABASE=schedulerdb
             - MARIADB_AUTO_UPGRADE=1
             - MARIADB_USER=user
             - MARIADB_PASSWORD=user
             - MARIADB_ROOT_PASSWORD=root
         command: --init-file /data/application/init.sql
         volumes:
-            - ./init.sql:/data/application/init.sql
-            - db-data:/var/lib/mysql
+            - ./init-scheduler-db.sql:/data/application/init.sql
+            - scheduler-data:/var/lib/mysql
         healthcheck:
             test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
             timeout: 10s
             retries: 5
-    service-a:
+    scheduler:
         #container_name: "mstr-servicea"
         depends_on:
-            serviceadb:
+            schedulerdb:
                 condition: service_healthy
             config: 
                 condition: service_healthy
             discovery: 
                 condition: service_healthy
-        image: "service-a:0.0.1"
+        image: "scheduler:0.0.1"
+        ports:
+          - "81:8080"
+        restart: unless-stopped
+        environment: 
+          - SPRING_PROFILES_ACTIVE=docker
+        healthcheck:
+          test: ["CMD-SHELL", "curl -f http://service-a:8080/actuator/health || exit 1"]
+          timeout: 10s
+          retries: 10
+    match-feed-db:
+        container_name: "mstr-match-feed-db"
+        image: "mariadb:latest"
+        ports:
+            - "3309:3306"
+        restart: unless-stopped
+        environment: 
+            - MARIADB_DATABASE=feeddb
+            - MARIADB_AUTO_UPGRADE=1
+            - MARIADB_USER=user
+            - MARIADB_PASSWORD=user
+            - MARIADB_ROOT_PASSWORD=root
+        command: --init-file /data/application/init.sql
+        volumes:
+            - ./init-feed-db.sql:/data/application/init.sql
+            - feed-data:/var/lib/mysql
+        healthcheck:
+            test: ["CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized"]
+            timeout: 10s
+            retries: 5
+    match-feed:
+        #container_name: "mstr-servicea"
+        depends_on:
+            match-feed-db:
+                condition: service_healthy
+            config: 
+                condition: service_healthy
+            discovery: 
+                condition: service_healthy
+        image: "match-feed:0.0.1"
         #ports:
         #  - "81:8080"
         restart: unless-stopped
         environment: 
           - SPRING_PROFILES_ACTIVE=docker
         healthcheck:
-          test: ["CMD-SHELL", "curl -f http://service-a:8080/actuator/health || exit 1"]
+          test: ["CMD-SHELL", "curl -f http://match-feed:8080/actuator/health || exit 1"]
           timeout: 10s
           retries: 10
     gateway:
@@ -119,3 +197,5 @@ services:
 volumes:
     db-data:
     auth-data:
+    scheduler-data:
+    feed-data:

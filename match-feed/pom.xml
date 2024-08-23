@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>rs.ac.bg.fon.mas</groupId>
-    <artifactId>scheduler</artifactId>
+    <artifactId>match-feed</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Scheduler</name>
-    <description></description>
+    <name>Match Feed</name>
+    <description>Demo project for Spring Boot</description>
     <url/>
     <licenses>
         <license/>
@@ -53,11 +53,16 @@
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Spring Cloud Config Client -->
+        <!-- Spring Cloud Stream Kafka Binder -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
+            <artifactId>spring-cloud-stream-binder-kafka</artifactId>
         </dependency>
+	<!-- Spring Cloud Config Client -->
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-starter-config</artifactId>
+	</dependency>
         <!-- Spring Cloud Discovery Client -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -75,10 +80,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>3.0.2</version>
-            <type>jar</type>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-test-binder</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <dependencyManagement>

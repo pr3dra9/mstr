@@ -7,6 +7,16 @@ spring:
         jwt:
           issuer-uri: http://localhost:9000
           #jwk-set-uri: http://localhost:9000/.well-known/openid-configuration
+  cloud:
+    stream:
+      default-binder: kafka
+      kafka.binder:
+        brokers: localhost
+        defaultBrokerPort: 9093
+
+  kafka:
+    host: localhost
+    port: 9093
 
 eureka:
   instance:
@@ -26,6 +36,16 @@ spring:
         jwt:
           issuer-uri: http://auth-server:8080
           #jwk-set-uri: http://auth-server:9000/.well-known/openid-configuration
+  cloud:
+    stream:
+      default-binder: kafka
+      kafka.binder:
+        brokers: kafka
+        defaultBrokerPort: 9092
+
+  kafka:
+    host: kafka
+    port: 9092
 
 eureka:
   client:

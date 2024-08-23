@@ -1,11 +1,11 @@
 ## YAML Template.
 ---
 server:
-  port: 91
-
+  port: 81
+  
 spring:
   datasource:
-    url: jdbc:mysql://localhost/serviceadb2
+    url: jdbc:mysql://localhost/schedulerdb
     port: '3306'
     username: root
     password: root
@@ -21,14 +21,11 @@ spring:
       ddl-auto: update
     show-sql: 'true'
 
-
-
 ---
 spring:
-  config:
-    activate.on-profile: docker
+  config.activate.on-profile: docker
   datasource:
-    url: jdbc:mysql://serviceadb/serviceadb2
+    url: jdbc:mysql://schedulerdb/schedulerdb
 
 server:
   port: 8080

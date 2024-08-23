@@ -1,7 +1,7 @@
 ## YAML Template.
 ---
 spring:
-  application.name: scheduler
+  application.name: match-feed
   config.import: "optional:configserver:"
   cloud:
     config.uri: http://localhost:8888
@@ -26,3 +26,11 @@ spring:
         dialect: org.hibernate.dialect.HSQLDialect
 
 eureka.client.enabled: false
+
+api:
+  key:
+    name: test
+    value: test
+  base-url: test
+  endpoints:
+    get-matches: test
