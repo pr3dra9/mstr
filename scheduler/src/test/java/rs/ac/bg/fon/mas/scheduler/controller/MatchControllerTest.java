@@ -64,13 +64,13 @@ public class MatchControllerTest {
         leagueEntity = new League(1L, "England", 1, "2024-25", "Premier League", "pl.png", 38, 
                 Set.of(arsenalEntity, chelseaEntity));
 
-        match = new Match(leagueEntity, arsenalEntity, chelseaEntity, 1, 
+        match = new Match(leagueEntity, arsenalEntity, chelseaEntity, "1", 
                 LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.SCHEDULED);
         
-        entityMatch = new Match(1L, leagueEntity, arsenalEntity, chelseaEntity, 1, 
+        entityMatch = new Match(1L, leagueEntity, arsenalEntity, chelseaEntity, "1", 
                 LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.SCHEDULED);
         
-        entityMatch2 = new Match(2L, leagueEntity, arsenalEntity, chelseaEntity, 1, 
+        entityMatch2 = new Match(2L, leagueEntity, arsenalEntity, chelseaEntity, "1", 
                 LocalDateTime.parse("2024-08-22T21:00:00"), MatchStatus.SCHEDULED);
 
     }

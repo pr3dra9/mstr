@@ -60,7 +60,7 @@ public class MatchEventRepositoryTest {
         League league = new League(0L, "England", 1, "2024-25", "Premier League", "pl.png", 38, Set.of(arsenalEntity, chelseaEntity));
         leagueEntity = leagueRepo.save(league);
 
-        Match match = new Match(0L, leagueEntity, arsenalEntity, chelseaEntity, 1, LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.SCHEDULED);
+        Match match = new Match(0L, leagueEntity, arsenalEntity, chelseaEntity, "1", LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.SCHEDULED);
         entityMatch = matchRepo.save(match);
     }
 

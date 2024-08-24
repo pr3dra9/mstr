@@ -9,17 +9,36 @@ package rs.ac.bg.fon.mas.match_feed.messaging;
  * @author Predrag
  */
 public class EventTeams {
-    public final String home;
-    public final String away;
+    private String home;
+    private String away;
 
     public EventTeams(String home, String away) {
         this.home = home;
         this.away = away;
     }
 
+    public EventTeams() {
+    }
+
     @Override
     public String toString() {
         return "EventTeams{" + "home=" + home + ", away=" + away + '}';
+    }
+
+    public String getHome() {
+        return home;
+    }
+
+    public void setHome(String home) {
+        this.home = home;
+    }
+
+    public String getAway() {
+        return away;
+    }
+
+    public void setAway(String away) {
+        this.away = away;
     }
     
 }

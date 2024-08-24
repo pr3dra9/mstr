@@ -28,6 +28,12 @@ public interface MatchRepository extends JpaRepository<Match, Long>{
     @Query("SELECT m FROM Match m WHERE m.id IN :ids")
     List<Match> findByIds(@Param("ids") List<Long> ids);
     
-    Optional<Match> findByLeagueAndHomeTeamAndAwayTeamAndRound(League league, Team homeTeam, Team awayTeam, int round);
+    Optional<Match> findByLeagueAndHomeTeamAndAwayTeamAndRound(League league, Team homeTeam, Team awayTeam, String round);
+    
+    List<Match> findByLeagueRegionAndLeagueNameAndRoundAndHomeTeamName(
+        String region, 
+        String leagueName, 
+        String round, 
+        String homeTeamName);
     
 }

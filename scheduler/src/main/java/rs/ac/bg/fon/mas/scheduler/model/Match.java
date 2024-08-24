@@ -29,7 +29,7 @@ public class Match {
     public Match() {
     }
 
-    public Match(League league, Team homeTeam, Team awayTeam, Integer round, LocalDateTime date, MatchStatus status) {
+    public Match(League league, Team homeTeam, Team awayTeam, String round, LocalDateTime date, MatchStatus status) {
         this.league = league;
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
@@ -38,7 +38,7 @@ public class Match {
         this.status = status;
     }
     
-    public Match(Long id, League league, Team homeTeam, Team awayTeam, Integer round, LocalDateTime date, MatchStatus status) {
+    public Match(Long id, League league, Team homeTeam, Team awayTeam, String round, LocalDateTime date, MatchStatus status) {
         this.id = id;
         this.league = league;
         this.homeTeam = homeTeam;
@@ -64,8 +64,7 @@ public class Match {
     @JoinColumn(name = "away_team_fk")
     private Team awayTeam;
 
-    @Min(value = 1)
-    private Integer round;
+    private String round;
 
     private LocalDateTime date;
 
@@ -104,11 +103,11 @@ public class Match {
         this.awayTeam = awayTeam;
     }
 
-    public Integer getRound() {
+    public String getRound() {
         return round;
     }
 
-    public void setRound(Integer round) {
+    public void setRound(String round) {
         this.round = round;
     }
 

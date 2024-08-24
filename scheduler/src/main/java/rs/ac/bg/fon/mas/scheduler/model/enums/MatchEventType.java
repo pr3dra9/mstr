@@ -19,6 +19,7 @@ public enum MatchEventType {
     CORNER_KICK("Corner Kick"),
     FREE_KICK("Free Kick"),
     HALFTIME("Halftime"),
+    VAR("Var"),
     FULLTIME("Full Time");
 
     private final String displayName;

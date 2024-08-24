@@ -69,5 +69,14 @@ public class MatchServiceImpl implements MatchService {
     public void delete(Match match) {
         repo.deleteById(match.getId());
     }
+
+    @Override
+    public Match findMatch(String leagueRegion, String leagueName, String round, String homeTeamName) {
+        List<Match> matches = repo.findByLeagueRegionAndLeagueNameAndRoundAndHomeTeamName(leagueRegion, leagueName, round, homeTeamName);
+        
+        if (matches.isEmpty())
+            return null;
+        return matches.get(0);
+    }
     
 }

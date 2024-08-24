@@ -20,4 +20,5 @@ public interface MatchService {
     List<Match> getByIds(List<Long> ids);
     Match update(Match match);
     void delete(Match match);
+    Match findMatch(String leagueRegion, String leagueName, String round, String homeTeamName);
 }

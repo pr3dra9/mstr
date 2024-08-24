@@ -53,6 +53,11 @@
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Spring Cloud Stream Kafka Binder -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-binder-kafka</artifactId>
+        </dependency>
         <!-- Spring Cloud Config Client -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

@@ -60,7 +60,7 @@ public class MatchEventServiceTest {
         chelseaEntity = new Team(2L, "Chelea", "che.png", "England", "London", "Stamford Bridge");
         leagueEntity = new League(1L, "England", 1, "2024-25", "Premier League", "pl.png", 38, Set.of(arsenalEntity, chelseaEntity));
 
-        entityMatch = new Match(1L, leagueEntity, arsenalEntity, chelseaEntity, 1, 
+        entityMatch = new Match(1L, leagueEntity, arsenalEntity, chelseaEntity, "1", 
                 LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.SCHEDULED);
 
         entityMatchEvent1 = new MatchEvent(1L, entityMatch, MatchEventType.GOAL, arsenalEntity, "Ronaldo", 55, "Cross");
