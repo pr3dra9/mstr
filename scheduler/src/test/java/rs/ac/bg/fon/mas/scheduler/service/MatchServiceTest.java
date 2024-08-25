@@ -188,4 +188,23 @@ public class MatchServiceTest {
         Mockito.verify(repo).deleteById(anyLong());
     }
     
+    @Test
+    public void testToComplited() {
+        Mockito.when(repo.existsById(anyLong()))
+            .thenReturn(Boolean.TRUE);
+        
+        Mockito.when(repo.save(editedMatch))
+            .thenReturn(editedMatch);
+        
+        Match dbMatch = service.toComplited(editedMatch);
+        
+        Assertions.assertNotNull(dbMatch);
+        Assertions.assertNotNull(dbMatch.getId());
+        Assertions.assertEquals(MatchStatus.COMPLETED, dbMatch.getStatus());
+        
+        Mockito.verify(repo).existsById(anyLong());
+        Mockito.verify(repo).save(editedMatch);
+        
+    }
+    
 }

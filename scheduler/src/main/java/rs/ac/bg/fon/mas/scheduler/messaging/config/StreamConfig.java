@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import reactor.core.publisher.Flux;
-import rs.ac.bg.fon.mas.scheduler.messaging.EventInfo;
-import rs.ac.bg.fon.mas.scheduler.messaging.EventMassage;
+import rs.ac.bg.fon.mas.scheduler.messaging.dto.EventInfo;
+import rs.ac.bg.fon.mas.scheduler.messaging.dto.EventMassage;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 import rs.ac.bg.fon.mas.scheduler.model.MatchEvent;
 import rs.ac.bg.fon.mas.scheduler.model.enums.MatchEventType;
@@ -53,20 +53,34 @@ public class StreamConfig {
                 eventMssg.getLeague().getRound(),
                 eventMssg.getTeams().getHome());
 
-        if (match == null) {
+        if (match == null || match.getStatus() == MatchStatus.COMPLETED) {
             return;
         }
 
-        logger.trace("processMessage: " + match.toString());
+        processMatch(match, eventMssg);
+        processMatchEvent(match, eventMssg);
+    }
 
-        if (match.getStatus() != MatchStatus.COMPLETED && match.getStatus() != MatchStatus.IN_PROGRESS) {
-            match.setStatus(MatchStatus.IN_PROGRESS);
-            if (eventMssg.getFixture().getFixtureStatusShort().equalsIgnoreCase("FT")) {
-                match.setStatus(MatchStatus.COMPLETED);
-            }
-            match = matchService.update(match);
+    private void processMatch(Match match, EventMassage eventMssg) {
+        logger.trace("Processing match: {}", match);
+        
+        match.setAwayTeamGoals(eventMssg.getGoals().getAway());
+        match.setHomeTeamGoals(eventMssg.getGoals().getHome());
+
+        if (eventMssg.getFixture().getFixtureStatusShort().equalsIgnoreCase("FT")) {
+            match = matchService.toComplited(match);
+            return;
         }
+        
+        if (match.getStatus() == MatchStatus.SCHEDULED) {
+            match.setStatus(MatchStatus.IN_PROGRESS);
+        } 
 
+        match = matchService.update(match);
+
+    }
+    
+    private void processMatchEvent(Match match, EventMassage eventMssg) {
         EventInfo info = eventMssg.getInfo();
 
         MatchEvent event = new MatchEvent(
@@ -76,8 +90,9 @@ public class StreamConfig {
                 info.getPlayerName(),
                 info.getTime(),
                 "");
-        logger.trace("processMessage: " + event.toString());
+        
         eventService.create(event);
+        logger.trace("Event processed: {}", event.toString());
     }
 
     private MatchEventType toMatchEventType(String type) {
@@ -94,5 +109,5 @@ public class StreamConfig {
                 null;
         };
     }
-
+    
 }

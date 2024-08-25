@@ -1,24 +1,21 @@
-## YAML Template.
----
 spring:
-  application.name: scheduler
+  application.name: ticketing
   config.import: "optional:configserver:"
   cloud:
     config.uri: http://localhost:8888
     function:
-      definition: eventConsumer;
+      definition: matchConsumer;
     stream:
       bindings:
-        eventConsumer-in-0:
-          destination: matchEvent
-          content-type: application/json
-        matchCompletion-out-0:
-          destination: matchCompletion
+        matchConsumer-in-0:
+          destination: match
           content-type: application/json
 
 logging:
   level:
-    rs.ac.bg.fon.mas.scheduler: TRACE
+    rs.ac.bg.fon.mas.ticketing: TRACE
+
+api.scheduler.url: http://scheduler/matches/by-ids
 
 ---
 spring:
@@ -28,18 +25,7 @@ spring:
 ---
 spring:
   config.activate.on-profile: test
-  cloud:
-    config.enabled: false
-    stream:
-      default-binder: kafka
-      kafka.binder:
-        brokers: localhost
-        defaultBrokerPort: 9093
-
-  kafka:
-    host: localhost
-    port: 9093
-  
+  cloud.config.enabled: false
   datasource:
     url: jdbc:hsqldb:mem:testdb
     driver-class-name: org.hsqldb.jdbc.JDBCDriver
@@ -49,5 +35,5 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.HSQLDialect
-  
+
 eureka.client.enabled: false

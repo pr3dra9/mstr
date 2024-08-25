@@ -19,6 +19,7 @@ public interface MatchService {
     List<Match> getAllForPeriod(LocalDateTime startDateTime, LocalDateTime endDateTime);
     List<Match> getByIds(List<Long> ids);
     Match update(Match match);
+    Match toComplited(Match match);
     void delete(Match match);
     Match findMatch(String leagueRegion, String leagueName, String round, String homeTeamName);
 }

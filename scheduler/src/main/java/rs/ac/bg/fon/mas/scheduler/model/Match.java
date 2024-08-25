@@ -29,15 +29,29 @@ public class Match {
     public Match() {
     }
 
-    public Match(League league, Team homeTeam, Team awayTeam, String round, LocalDateTime date, MatchStatus status) {
+    public Match(Long id, League league, Team homeTeam, Team awayTeam, String round, LocalDateTime date, MatchStatus status, int homeTeamGoals, int awayTeamGoals) {
+        this.id = id;
         this.league = league;
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
         this.round = round;
         this.date = date;
         this.status = status;
+        this.homeTeamGoals = homeTeamGoals;
+        this.awayTeamGoals = awayTeamGoals;
     }
-    
+
+    public Match(League league, Team homeTeam, Team awayTeam, String round, LocalDateTime date, MatchStatus status, int homeTeamGoals, int awayTeamGoals) {
+        this.league = league;
+        this.homeTeam = homeTeam;
+        this.awayTeam = awayTeam;
+        this.round = round;
+        this.date = date;
+        this.status = status;
+        this.homeTeamGoals = homeTeamGoals;
+        this.awayTeamGoals = awayTeamGoals;
+    }
+
     public Match(Long id, League league, Team homeTeam, Team awayTeam, String round, LocalDateTime date, MatchStatus status) {
         this.id = id;
         this.league = league;
@@ -46,8 +60,21 @@ public class Match {
         this.round = round;
         this.date = date;
         this.status = status;
+        this.homeTeamGoals = 0;
+        this.awayTeamGoals = 0;
     }
-        
+
+    public Match(League league, Team homeTeam, Team awayTeam, String round, LocalDateTime date, MatchStatus status) {
+        this.league = league;
+        this.homeTeam = homeTeam;
+        this.awayTeam = awayTeam;
+        this.round = round;
+        this.date = date;
+        this.status = status;
+        this.homeTeamGoals = 0;
+        this.awayTeamGoals = 0;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -70,6 +97,10 @@ public class Match {
 
     @Enumerated(EnumType.STRING)
     private MatchStatus status;
+    
+    private int homeTeamGoals;
+    
+    private int awayTeamGoals;
 
     public Long getId() {
         return id;
@@ -127,6 +158,22 @@ public class Match {
         this.status = status;
     }
 
+    public int getHomeTeamGoals() {
+        return homeTeamGoals;
+    }
+
+    public void setHomeTeamGoals(int homeTeamGoals) {
+        this.homeTeamGoals = homeTeamGoals;
+    }
+
+    public int getAwayTeamGoals() {
+        return awayTeamGoals;
+    }
+
+    public void setAwayTeamGoals(int awayTeamGoals) {
+        this.awayTeamGoals = awayTeamGoals;
+    }
+    
     @Override
     public String toString() {
         return "Match{" + "id=" + id + ", league=" + league + ", homeTeam=" + homeTeam + ", awayTeam=" + awayTeam + ", round=" + round + ", date=" + date + ", status=" + status + '}';

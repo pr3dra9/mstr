@@ -9,7 +9,11 @@ import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.stereotype.Service;
+import rs.ac.bg.fon.mas.scheduler.messaging.dto.MatchMassage;
+import rs.ac.bg.fon.mas.scheduler.messaging.dto.enums.MatchOutcome;
+import rs.ac.bg.fon.mas.scheduler.messaging.dto.enums.MatchStatus;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 import rs.ac.bg.fon.mas.scheduler.repository.MatchRepository;
 import rs.ac.bg.fon.mas.scheduler.service.MatchService;
@@ -23,6 +27,9 @@ public class MatchServiceImpl implements MatchService {
 
     @Autowired
     MatchRepository repo;
+    
+    @Autowired
+    private StreamBridge streamBridge;
     
     @Override
     public Match create(Match match) {
@@ -65,6 +72,40 @@ public class MatchServiceImpl implements MatchService {
         return repo.save(match);
     }
 
+    @Override
+    public Match toComplited(Match match) {
+        boolean exists = repo.existsById(match.getId());
+        if (!exists) {
+            throw new EntityNotFoundException("Entity does not exist!");
+        }
+        match.setStatus(rs.ac.bg.fon.mas.scheduler.model.enums.MatchStatus.COMPLETED);
+        Match entity = repo.save(match);        
+        
+        sendMessage(entity);
+        
+        return entity;
+    }
+    
+    private void sendMessage(Match match) {
+        streamBridge.send(
+                "matchCompletion-out-0", 
+                new MatchMassage(
+                        match.getId(), 
+                        MatchStatus.COMPLETED, 
+                        getMatchOutcome(match)));
+    
+    }
+    
+    private MatchOutcome getMatchOutcome(Match match) {
+       MatchOutcome mo = MatchOutcome.DRAW;
+        if (match.getAwayTeamGoals() > match.getHomeTeamGoals()) {
+            mo = MatchOutcome.AWAY_WIN;
+        } else if (match.getHomeTeamGoals() > match.getAwayTeamGoals()) {
+            mo = MatchOutcome.HOME_WIN;
+        }
+        return mo;
+    }
+    
     @Override
     public void delete(Match match) {
         repo.deleteById(match.getId());

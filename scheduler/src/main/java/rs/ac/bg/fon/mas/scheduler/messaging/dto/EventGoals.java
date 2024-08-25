@@ -2,42 +2,43 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package rs.ac.bg.fon.mas.scheduler.messaging;
+package rs.ac.bg.fon.mas.scheduler.messaging.dto;
 
 /**
  *
  * @author Predrag
  */
-public class EventTeams {
-    private String home;
-    private String away;
+public class EventGoals {
+    private int home;
+    private int away;
 
-    public EventTeams(String home, String away) {
+    public EventGoals(int home, int away) {
         this.home = home;
         this.away = away;
     }
 
-    public EventTeams() {
+    public EventGoals() {
     }
 
+    
     @Override
     public String toString() {
-        return "EventTeams{" + "home=" + home + ", away=" + away + '}';
+        return "EventGoals{" + "home=" + home + ", away=" + away + '}';
     }
 
-    public String getHome() {
+    public int getHome() {
         return home;
     }
 
-    public void setHome(String home) {
+    public void setHome(int home) {
         this.home = home;
     }
 
-    public String getAway() {
+    public int getAway() {
         return away;
     }
 
-    public void setAway(String away) {
+    public void setAway(int away) {
         this.away = away;
     }
     
