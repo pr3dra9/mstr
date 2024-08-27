@@ -16,8 +16,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.TestPropertySource;
 import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
@@ -27,9 +27,10 @@ import rs.ac.bg.fon.mas.scheduler.model.enums.MatchStatus;
  *
  * @author Predrag
  */
-@SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("test")
+@DataJpaTest
+@TestPropertySource(properties = {
+    "spring.cloud.config.enabled=false"
+})@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MatchRepositoryTest {
 
     @Autowired

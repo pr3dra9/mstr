@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,20 +28,16 @@ import rs.ac.bg.fon.mas.scheduler.service.MatchService;
 public class MatchControllerImpl implements MatchController {
 
     @Autowired
-    MatchService service;
+    private MatchService service;
     
     @Autowired
-    MatchMapper mapper;
+    private MatchMapper<MatchDto> mapper;
     
     @Override
-    public ResponseEntity<List<MatchDto>> getAll() {
-        List<Match> matches = service.getAll();
-        
-        List<MatchDto> dtoMatches = matches.stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
-        
-        return ResponseEntity.status(HttpStatus.OK).body(dtoMatches);
+    public ResponseEntity<Page<MatchDto>> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        var entities = service.getAll(pageable);                    
+        return ResponseEntity.status(HttpStatus.OK).body(mapper.toDtos(entities));
     }
 
     @Override

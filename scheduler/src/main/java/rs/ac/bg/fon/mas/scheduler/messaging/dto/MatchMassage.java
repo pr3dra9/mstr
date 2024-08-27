@@ -4,6 +4,7 @@
  */
 package rs.ac.bg.fon.mas.scheduler.messaging.dto;
 
+import java.util.Objects;
 import rs.ac.bg.fon.mas.scheduler.messaging.dto.enums.MatchOutcome;
 import rs.ac.bg.fon.mas.scheduler.messaging.dto.enums.MatchStatus;
 
@@ -19,6 +20,12 @@ public class MatchMassage {
     public MatchMassage() {
     }
 
+    public MatchMassage(Long matchId, MatchOutcome outcome) {
+        this.matchId = matchId;
+        this.status = MatchStatus.COMPLETED;
+        this.outcome = outcome;
+    }
+    
     public MatchMassage(Long matchId, MatchStatus status, MatchOutcome outcome) {
         this.matchId = matchId;
         this.status = status;
@@ -47,6 +54,36 @@ public class MatchMassage {
 
     public void setOutcome(MatchOutcome outcome) {
         this.outcome = outcome;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + Objects.hashCode(this.matchId);
+        hash = 41 * hash + Objects.hashCode(this.status);
+        hash = 41 * hash + Objects.hashCode(this.outcome);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MatchMassage other = (MatchMassage) obj;
+        if (!Objects.equals(this.matchId, other.matchId)) {
+            return false;
+        }
+        if (this.status != other.status) {
+            return false;
+        }
+        return this.outcome == other.outcome;
     }
     
 }

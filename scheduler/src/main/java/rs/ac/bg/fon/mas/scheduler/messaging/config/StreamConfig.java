@@ -76,7 +76,7 @@ public class StreamConfig {
             match.setStatus(MatchStatus.IN_PROGRESS);
         } 
 
-        match = matchService.update(match);
+        match = matchService.update(match.getId(), match);
 
     }
     

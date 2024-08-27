@@ -6,6 +6,8 @@ package rs.ac.bg.fon.mas.scheduler.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 
 /**
@@ -14,12 +16,12 @@ import rs.ac.bg.fon.mas.scheduler.model.Match;
  */
 public interface MatchService {
     Match create(Match match);
-    List<Match> getAll();
+    Page<Match> getAll(Pageable pageable);
     Match getById(Long matchId);
     List<Match> getAllForPeriod(LocalDateTime startDateTime, LocalDateTime endDateTime);
     List<Match> getByIds(List<Long> ids);
-    Match update(Match match);
-    Match toComplited(Match match);
-    void delete(Match match);
     Match findMatch(String leagueRegion, String leagueName, String round, String homeTeamName);
+    Match update(Long id, Match match);
+    Match toComplited(Match match);
+    void delete(Long id);
 }

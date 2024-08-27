@@ -4,21 +4,10 @@
  */
 package rs.ac.bg.fon.mas.scheduler.dto;
 
-import java.time.LocalDateTime;
-
 /**
  *
  * @author Predrag
  */
-public record MatchDto (
-    Long id,
-    MatchLeagueDto league,
-    MatchTeamDto homeTeam,
-    MatchTeamDto awayTeam,
-    String round,
-    String date,
-    String status,
-    int homeTeamGoals,
-    int awayTeamGoals){
+public record MatchTeamDto(Long id, String name) {
+    
 }
-

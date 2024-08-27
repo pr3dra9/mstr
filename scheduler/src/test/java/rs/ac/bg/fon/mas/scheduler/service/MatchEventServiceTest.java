@@ -13,12 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import static org.mockito.Mockito.times;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.TestPropertySource;
 import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 import rs.ac.bg.fon.mas.scheduler.model.MatchEvent;
@@ -26,20 +27,23 @@ import rs.ac.bg.fon.mas.scheduler.model.Team;
 import rs.ac.bg.fon.mas.scheduler.model.enums.MatchEventType;
 import rs.ac.bg.fon.mas.scheduler.model.enums.MatchStatus;
 import rs.ac.bg.fon.mas.scheduler.repository.MatchEventRepository;
+import rs.ac.bg.fon.mas.scheduler.service.impl.MatchEventServiceImpl;
 
 /**
  *
  * @author Predrag
  */
-@SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
-@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
+@TestPropertySource(properties = {
+    "spring.cloud.config.enabled=false"
+})
 public class MatchEventServiceTest {
     
-    @Autowired
-    MatchEventService service;
-    
-    @MockBean
+    @Mock
     MatchEventRepository repo;
+
+    @InjectMocks
+    MatchEventServiceImpl service;
     
     
     private MatchEvent entityMatchEvent1;
@@ -102,7 +106,6 @@ public class MatchEventServiceTest {
         Mockito.verify(repo, times(0)).save(matchEvent);
     }
 
-    
     @Test
     public void testGetAllForMatch() {
         Mockito.when(repo.findByMatchOrderByMinute(entityMatch))
@@ -115,5 +118,4 @@ public class MatchEventServiceTest {
         
     }
 
-    
 }

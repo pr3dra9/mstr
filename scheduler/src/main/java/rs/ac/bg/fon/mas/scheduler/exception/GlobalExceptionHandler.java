@@ -27,5 +27,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Void> handleEntityExistsException(EntityExistsException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Void> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
     
 }

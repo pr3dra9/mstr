@@ -12,32 +12,36 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.anyLong;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.TestPropertySource;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
 import rs.ac.bg.fon.mas.scheduler.repository.TeamRepository;
+import rs.ac.bg.fon.mas.scheduler.service.impl.TeamServiceImpl;
 
 /**
  *
  * @author Predrag
  */
-@SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
-@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
+@TestPropertySource(properties = {
+    "spring.cloud.config.enabled=false"
+})
 public class TeamServiceTest {
     
-    @Autowired
-    private TeamService service;
-
-    @MockBean
+    @Mock
     private TeamRepository mockRepo;
     
+    @InjectMocks
+    private TeamServiceImpl service;
+
     @Test
     public void testSave() {
         Team team = new Team("Arsenal", "ars.png", "England", "London", "Etihad");
@@ -48,7 +52,7 @@ public class TeamServiceTest {
                 .thenReturn(Optional.empty());
 
         
-        Team savedTeam = service.save(team);
+        Team savedTeam = service.create(team);
 
         assertNotNull(savedTeam);
         assertNotNull(savedTeam.getId());
@@ -73,7 +77,7 @@ public class TeamServiceTest {
                 .thenReturn(Optional.of(entityTeam));
         
         assertThrows(EntityExistsException.class, () -> {
-            service.save(team);
+            service.create(team);
         });
         
         verify(mockRepo).findByNameAndCountryAndCity(team.getName(), team.getCountry(), team.getCity());
@@ -84,12 +88,13 @@ public class TeamServiceTest {
     @Test
     public void testUpdate() {
         Team entityTeam = new Team(1L, "Arsenal", "ars.png", "England", "London", "Etihad");
-        Team editedTeam = new Team(1L, "Arsenal_edited", "ars_edited.png", "England_edited", "London_edited", "Etihad_edited");
+        Team editedTeam1 = new Team("Arsenal_edited", "ars_edited.png", "England_edited", "London_edited", "Etihad_edited");
+        Team editedTeam2 = new Team(1L, "Arsenal_edited", "ars_edited.png", "England_edited", "London_edited", "Etihad_edited");
         
         when(mockRepo.findById(anyLong())).thenReturn(Optional.of(entityTeam));
-        when(mockRepo.save(editedTeam)).thenReturn(editedTeam);
+        when(mockRepo.save(editedTeam2)).thenReturn(editedTeam2);
         
-        Team savedTeam = service.update(editedTeam);
+        Team savedTeam = service.update(entityTeam.getId(), editedTeam1);
         
         assertNotNull(savedTeam);
         assertNotNull(savedTeam.getId());
@@ -100,8 +105,8 @@ public class TeamServiceTest {
         assertEquals("London_edited", savedTeam.getCity(), "City should be London_edited");
         assertEquals("Etihad_edited", savedTeam.getStadium(), "Stadium should be Etihad_edited");
         
-        verify(mockRepo).findById(anyLong());
-        verify(mockRepo).save(editedTeam);
+        verify(mockRepo).findById(entityTeam.getId());
+        verify(mockRepo).save(editedTeam2);
     }
 
     @Test
@@ -111,10 +116,11 @@ public class TeamServiceTest {
         when(mockRepo.findById(anyLong())).thenReturn(Optional.empty());
                 
         assertThrows(EntityNotFoundException.class, () -> {
-            service.update(editedTeam);
+            service.update(editedTeam.getId(), editedTeam);
         });
         
-        verify(mockRepo).findById(anyLong());        
+        verify(mockRepo).findById(anyLong());
+        verify(mockRepo, times(0)).save(editedTeam);
     }
     
     @Test
@@ -161,18 +167,4 @@ public class TeamServiceTest {
        
     }
 
-    @Test
-    public void testDelete_throwsException_entityDoesntExist() {
-       Team team = new Team("Arsenal", "ars.png", "England", "London", "Etihad");
-       
-       when(mockRepo.findByNameAndCountryAndCity(team.getName(), team.getCountry(),team.getCity()))
-               .thenReturn(Optional.empty());
-       
-        assertThrows(EntityNotFoundException.class, () -> {
-            service.delete(team);
-        });
-       
-       verify(mockRepo).findByNameAndCountryAndCity(team.getName(), team.getCountry(),team.getCity());
-    }
-    
 }

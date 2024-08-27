@@ -4,21 +4,23 @@
  */
 package rs.ac.bg.fon.mas.scheduler.service;
 
-import java.util.List;
+import java.util.Set;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import rs.ac.bg.fon.mas.scheduler.model.League;
-import rs.ac.bg.fon.mas.scheduler.model.Team;
 
 /**
  *
  * @author Predrag
  */
 public interface LeagueService {
-    List<League> getAll();
-    League get(Long id);
     League create(League league);
-    League update(League league);
-    League addTeam(Long leagueId, Team team);
-    League addTeam(Long leagueId, Long teamId);
-    void delete(League league);
+    Page<League> getAll(Pageable pageable);
+    League get(Long id);
+    League update(Long id, League league);
     void delete(Long leagueId);
+    
+    League addTeams(Long leagueId, Set<Long> teamIds);
+    League removeTeams(Long leagueId, Set<Long> teamIds);
+    League replaceTeams(Long leagueId, Set<Long> teamIds);
 }

@@ -10,11 +10,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rs.ac.bg.fon.mas.scheduler.messaging.dto.MatchMassage;
 import rs.ac.bg.fon.mas.scheduler.messaging.dto.enums.MatchOutcome;
-import rs.ac.bg.fon.mas.scheduler.messaging.dto.enums.MatchStatus;
+//import rs.ac.bg.fon.mas.scheduler.messaging.dto.enums.MatchStatus;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
+import rs.ac.bg.fon.mas.scheduler.model.enums.MatchStatus;
 import rs.ac.bg.fon.mas.scheduler.repository.MatchRepository;
 import rs.ac.bg.fon.mas.scheduler.service.MatchService;
 
@@ -44,13 +47,14 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
-    public List<Match> getAll() {
-        return repo.findAll();
+    public Page<Match> getAll(Pageable pageable) {
+        return repo.findAll(pageable);
     }
 
     @Override
     public Match getById(Long matchId) {
-        return repo.findById(matchId).orElse(null);
+        return repo.findById(matchId)
+                .orElseThrow(()-> new EntityNotFoundException());
     }
 
     @Override
@@ -64,8 +68,8 @@ public class MatchServiceImpl implements MatchService {
     }
 
     @Override
-    public Match update(Match match) {
-        boolean exists = repo.existsById(match.getId());
+    public Match update(Long id, Match match) {
+        boolean exists = repo.existsById(id);
         if (!exists) {
             throw new EntityNotFoundException("Entity does not exist!");
         }
@@ -78,7 +82,7 @@ public class MatchServiceImpl implements MatchService {
         if (!exists) {
             throw new EntityNotFoundException("Entity does not exist!");
         }
-        match.setStatus(rs.ac.bg.fon.mas.scheduler.model.enums.MatchStatus.COMPLETED);
+        match.setStatus(MatchStatus.COMPLETED);
         Match entity = repo.save(match);        
         
         sendMessage(entity);
@@ -91,9 +95,7 @@ public class MatchServiceImpl implements MatchService {
                 "matchCompletion-out-0", 
                 new MatchMassage(
                         match.getId(), 
-                        MatchStatus.COMPLETED, 
-                        getMatchOutcome(match)));
-    
+                        getMatchOutcome(match)));    
     }
     
     private MatchOutcome getMatchOutcome(Match match) {
@@ -107,8 +109,8 @@ public class MatchServiceImpl implements MatchService {
     }
     
     @Override
-    public void delete(Match match) {
-        repo.deleteById(match.getId());
+    public void delete(Long id) {
+        repo.deleteById(id);
     }
 
     @Override

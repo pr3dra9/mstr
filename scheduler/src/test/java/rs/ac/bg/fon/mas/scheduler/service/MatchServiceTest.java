@@ -4,8 +4,10 @@
  */
 package rs.ac.bg.fon.mas.scheduler.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +23,15 @@ import static org.mockito.Mockito.times;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.cloud.stream.binder.test.EnableTestBinder;
+import org.springframework.cloud.stream.binder.test.OutputDestination;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.TestPropertySource;
+import rs.ac.bg.fon.mas.scheduler.messaging.dto.MatchMassage;
+import rs.ac.bg.fon.mas.scheduler.messaging.dto.enums.MatchOutcome;
 import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
@@ -32,18 +42,29 @@ import rs.ac.bg.fon.mas.scheduler.repository.MatchRepository;
  *
  * @author Predrag
  */
-@SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
-@ActiveProfiles("test")
+@SpringBootTest
+@TestPropertySource(properties = {
+    "spring.cloud.config.enabled=false",
+    "eureka.client.enabled=false"
+})
+@EnableTestBinder()
 public class MatchServiceTest {
     
     @Autowired
     MatchService service;
+    
+    //@Autowired
+    //private InputDestination input;
+
+    @Autowired
+    private OutputDestination output;
     
     @MockBean
     MatchRepository repo;
     
     private Match match;
     private Match entityMatch;
+    private Match entityMatchComplited;
     private Match entityMatch2;
     private Match editedMatch;
     
@@ -61,7 +82,10 @@ public class MatchServiceTest {
                 LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.SCHEDULED);
         
         entityMatch = new Match(1L, leagueEntity, arsenalEntity, chelseaEntity, "1", 
-                LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.SCHEDULED);
+                LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.SCHEDULED,0 ,0); 
+
+        entityMatchComplited = new Match(1L, leagueEntity, arsenalEntity, chelseaEntity, "1", 
+                LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.COMPLETED, 2, 1);
 
         entityMatch2 = new Match(2L, leagueEntity, arsenalEntity, chelseaEntity, "1", 
                 LocalDateTime.parse("2024-08-21T21:00:00"), MatchStatus.SCHEDULED);
@@ -104,13 +128,16 @@ public class MatchServiceTest {
 
     @Test
     public void testGetAll() {
-        Mockito.when(repo.findAll()).thenReturn(List.of(entityMatch));
+        Pageable pageable = PageRequest.of(1, 10);
+        Page<Match> leaguePage = new PageImpl<>(List.of(entityMatch));
         
-        List<Match> matches = service.getAll();
+        Mockito.when(repo.findAll(pageable)).thenReturn(leaguePage);
         
-        Assertions.assertEquals(1, matches.size());
+        Page<Match> matches = service.getAll(pageable);
         
-        Mockito.verify(repo).findAll();
+        Assertions.assertEquals(1, matches.getSize());
+        
+        Mockito.verify(repo).findAll(pageable);
     }
     
     @Test
@@ -147,7 +174,7 @@ public class MatchServiceTest {
         Mockito.when(repo.save(editedMatch))
             .thenReturn(editedMatch);
         
-        Match dbMatch = service.update(editedMatch);
+        Match dbMatch = service.update(editedMatch.getId(), editedMatch);
         Assertions.assertNotNull(dbMatch);
         Assertions.assertNotNull(dbMatch.getId());
         
@@ -161,7 +188,7 @@ public class MatchServiceTest {
             .thenReturn(Boolean.FALSE);
         
         assertThrows(EntityNotFoundException.class, () -> {
-            service.update(editedMatch);
+            service.update(editedMatch.getId(), editedMatch);
         });
         
         Mockito.verify(repo).existsById(anyLong());
@@ -183,28 +210,41 @@ public class MatchServiceTest {
     public void testDelete() {
         Mockito.doNothing().when(repo).deleteById(anyLong());
         
-        service.delete(entityMatch);
+        service.delete(entityMatch.getId());
        
         Mockito.verify(repo).deleteById(anyLong());
     }
     
     @Test
-    public void testToComplited() {
+    public void testToComplited() throws IOException {
         Mockito.when(repo.existsById(anyLong()))
             .thenReturn(Boolean.TRUE);
         
-        Mockito.when(repo.save(editedMatch))
-            .thenReturn(editedMatch);
+        Mockito.when(repo.save(entityMatchComplited))
+            .thenReturn(entityMatchComplited);
         
-        Match dbMatch = service.toComplited(editedMatch);
+        Assertions.assertEquals(entityMatch, entityMatchComplited);
+        
+        Match dbMatch = service.toComplited(entityMatch);
         
         Assertions.assertNotNull(dbMatch);
         Assertions.assertNotNull(dbMatch.getId());
         Assertions.assertEquals(MatchStatus.COMPLETED, dbMatch.getStatus());
         
-        Mockito.verify(repo).existsById(anyLong());
-        Mockito.verify(repo).save(editedMatch);
+        MatchMassage excpectedMessage = new MatchMassage(
+                editedMatch.getId(), 
+                rs.ac.bg.fon.mas.scheduler.messaging.dto.enums.MatchStatus.COMPLETED, 
+                MatchOutcome.HOME_WIN);
         
+        ObjectMapper objectMapper = new ObjectMapper();
+        MatchMassage inMessage= objectMapper.readValue(output.receive().getPayload(), MatchMassage.class);
+        
+        Assertions.assertNotNull(inMessage);
+        Assertions.assertEquals(excpectedMessage, inMessage);
+        
+        Mockito.verify(repo).existsById(anyLong());
+        Mockito.verify(repo).save(entityMatchComplited);
+
     }
     
 }

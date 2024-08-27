@@ -6,19 +6,18 @@ package rs.ac.bg.fon.mas.scheduler.controller.mapper;
 
 import java.util.List;
 import org.springframework.data.domain.Page;
-import rs.ac.bg.fon.mas.scheduler.model.Match;
+import rs.ac.bg.fon.mas.scheduler.model.League;
 
 /**
  *
  * @author Predrag
  */
-public interface MatchMapper<T> {
-    Match toEntity(T dto);
-    List<Match> toEntities(List<T> dtos);
+public interface LeagueMapper<T> {
+    League toEntity(T dto);
+    List<League> toEntitties(List<T> dtos);
     
-    
-    T toDto(Match entity);
-    List<T> toDtos(List<Match> entities);
-    Page<T> toDtos(Page<Match> entities);
-    
+    T toDto(League entity);
+    List<T> toDtos(List<League> entitties);
+    Page<T> toDtos(Page<League> entitties);
+
 }

@@ -21,10 +21,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import rs.ac.bg.fon.mas.scheduler.controller.mapper.impl.LeagueMapperImpl;
 import rs.ac.bg.fon.mas.scheduler.controller.mapper.impl.MatchMapperImpl;
+import rs.ac.bg.fon.mas.scheduler.controller.mapper.impl.TeamMapperImpl;
 import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
@@ -36,13 +40,15 @@ import rs.ac.bg.fon.mas.scheduler.service.MatchService;
  * @author Predrag
  */
 @WebMvcTest(controllers = MatchController.class)
-@Import(MatchMapperImpl.class)
-@ActiveProfiles("test")
+@Import({MatchMapperImpl.class, LeagueMapperImpl.class, TeamMapperImpl.class})
+@TestPropertySource(properties = {
+    "spring.cloud.config.enabled=false"
+})
 public class MatchControllerTest {
     
     @Autowired
     private MockMvc mockMvc;
-    
+        
     @MockBean
     private MatchService service;
     
@@ -77,17 +83,19 @@ public class MatchControllerTest {
     
     @Test
     public void testGetAll() throws Exception {
+        PageRequest pageReq = PageRequest.of(0, 10);
+        var leaguePage = new PageImpl<>(List.of(entityMatch, entityMatch2));
         
-        when(service.getAll())
-                .thenReturn(List.of(entityMatch, entityMatch2));
+        when(service.getAll(pageReq))
+                .thenReturn(leaguePage);
         
         this.mockMvc
                 .perform(get("/matches"))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.size()", Matchers.is(2)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content.size()", Matchers.is(2)));
                 // .content(mapper.writeValueAsString(entity))
                 
-        Mockito.verify(service).getAll();
+        Mockito.verify(service).getAll(pageReq);
     }
 
     @Test

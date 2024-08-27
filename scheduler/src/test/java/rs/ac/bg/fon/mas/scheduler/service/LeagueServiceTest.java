@@ -14,35 +14,42 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.anyLong;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.times;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.TestPropertySource;
 import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
 import rs.ac.bg.fon.mas.scheduler.repository.LeagueRepository;
 import rs.ac.bg.fon.mas.scheduler.repository.TeamRepository;
+import rs.ac.bg.fon.mas.scheduler.service.impl.LeagueServiceImpl;
 
 /**
  *
  * @author Predrag
  */
-@SpringBootTest(properties = {"eureka.client.enabled=false", "spring.cloud.config.enabled=false"})
+@ExtendWith(MockitoExtension.class)
+@TestPropertySource(properties = {
+    "spring.cloud.config.enabled=false"
+})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("test")
 public class LeagueServiceTest {
     
-    @MockBean
+    @Mock
     LeagueRepository leagueRepository;
 
-    @MockBean
+    @Mock
     TeamRepository teamRepository;
     
-    @Autowired
-    LeagueService leagueService;
+    @InjectMocks
+    LeagueServiceImpl leagueService;
     
     private League league;
     private League entityLeague;
@@ -61,13 +68,15 @@ public class LeagueServiceTest {
 
     @Test
     public void testGetAll() {
-        Mockito.when(leagueRepository.findAll()).thenReturn(List.of(entityLeague));
+        Pageable pageable = PageRequest.of(1, 10);
+        Page<League> leaguePage = new PageImpl<>(List.of(entityLeague));
+        Mockito.when(leagueRepository.findAll(pageable)).thenReturn(leaguePage);
         
-        List<League> leagues = leagueService.getAll();
+        Page<League> leagues = leagueService.getAll(pageable);
         
-        Assertions.assertEquals(1, leagues.size());
+        Assertions.assertEquals(1, leagues.getContent().size());
         
-        Mockito.verify(leagueRepository).findAll();
+        Mockito.verify(leagueRepository).findAll(pageable);
     }
     
     @Test
@@ -83,11 +92,12 @@ public class LeagueServiceTest {
     
     @Test
     public void testGetById_NoLeague() {
-        Mockito.when(leagueRepository.findById(anyLong())).thenReturn(Optional.empty());
+        Mockito.when(leagueRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
         
-        League dbLeague = leagueService.get(1L);
-        
-        Assertions.assertNull(dbLeague);
+        Assertions.assertThrows(EntityNotFoundException.class, () -> {
+            leagueService.get(1L);
+        });
         
         Mockito.verify(leagueRepository).findById(anyLong());
     }
@@ -136,7 +146,7 @@ public class LeagueServiceTest {
         Mockito.when(leagueRepository.save(editedLeague))
                 .thenReturn(editedLeague);
         
-        League dbLeague = leagueService.update(editedLeague);
+        League dbLeague = leagueService.update(editedLeague.getId(), editedLeague);
         
         Assertions.assertNotNull(dbLeague);
         
@@ -158,7 +168,7 @@ public class LeagueServiceTest {
                 .thenReturn(Boolean.FALSE);
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            leagueService.update(editedLeague);
+            leagueService.update(editedLeague.getId(), editedLeague);
         });
         
         Mockito.verify(leagueRepository).existsById(anyLong());
@@ -166,110 +176,29 @@ public class LeagueServiceTest {
     }    
 
     @Test
-    public void testAddTeam() {
+    public void testAddTeams() {
         Mockito.when(leagueRepository.findById(anyLong()))
                 .thenReturn(Optional.of(entityLeague));
 
-        Mockito.when(teamRepository.findById(anyLong()))
-                .thenReturn(Optional.of(entityTeam));
+        Mockito.when(teamRepository.findAllById(Set.of(entityTeam.getId())))
+                .thenReturn(List.of(entityTeam));
 
         Mockito.when(leagueRepository.save(entityLeagueOneTeam))
                 .thenReturn(entityLeagueOneTeam);
         
         try{
-            League dbLeague = leagueService.addTeam(1L, entityTeam);
+            League dbLeague = leagueService.addTeams(1L, Set.of(entityTeam.getId()));
             Assertions.assertEquals(1, dbLeague.getTeams().size());        
         }finally{
             entityLeague.getTeams().clear();
         }
         
         Mockito.verify(leagueRepository).findById(anyLong());
-        Mockito.verify(teamRepository).findById(anyLong());
+        Mockito.verify(teamRepository).findAllById(Set.of(entityTeam.getId()));
         Mockito.verify(leagueRepository).save(entityLeagueOneTeam);
         
         
         
-    }
-
-    @Test
-    public void testAddTeam_teamExists() {
-        Mockito.when(leagueRepository.findById(anyLong()))
-                .thenReturn(Optional.of(entityLeagueOneTeam));
-
-        Mockito.when(teamRepository.findById(anyLong()))
-                .thenReturn(Optional.of(entityTeam));
-
-        Mockito.when(leagueRepository.save(entityLeagueOneTeam))
-                .thenReturn(entityLeagueOneTeam);
-        
-        
-        try{
-            League dbLeague = leagueService.addTeam(1L, entityTeam);
-            Assertions.assertEquals(1, dbLeague.getTeams().size());
-        }finally{
-            entityLeague.getTeams().clear();
-        }
-            
-        
-        
-        Mockito.verify(leagueRepository).findById(anyLong());
-        Mockito.verify(teamRepository).findById(anyLong());
-        Mockito.verify(leagueRepository, times(0)).save(entityLeagueOneTeam);
-        
-        
-    }
-
-    @Test
-    public void testAddTeamById() {
-        Mockito.when(leagueRepository.findById(anyLong()))
-                .thenReturn(Optional.of(entityLeague));
-
-        Mockito.when(teamRepository.findById(anyLong()))
-                .thenReturn(Optional.of(entityTeam));
-
-        Mockito.when(leagueRepository.save(entityLeagueOneTeam))
-                .thenReturn(entityLeagueOneTeam);
-        
-        
-        League dbLeague = leagueService.addTeam(1L, anyLong());
-        Assertions.assertEquals(1, dbLeague.getTeams().size());
-        
-        Mockito.verify(leagueRepository).findById(anyLong());
-        Mockito.verify(teamRepository).findById(anyLong());
-        Mockito.verify(leagueRepository).save(entityLeagueOneTeam);
-        
-        
-    }
-
-    @Test
-    public void testAddTeamById_teamExists() {
-        Mockito.when(leagueRepository.findById(anyLong()))
-                .thenReturn(Optional.of(entityLeagueOneTeam));
-
-        Mockito.when(teamRepository.findById(anyLong()))
-                .thenReturn(Optional.of(entityTeam));
-
-        Mockito.when(leagueRepository.save(entityLeagueOneTeam))
-                .thenReturn(entityLeagueOneTeam);
-        
-        
-        League dbLeague = leagueService.addTeam(1L, anyLong());
-        Assertions.assertEquals(1, dbLeague.getTeams().size());
-        
-        Mockito.verify(leagueRepository).findById(anyLong());
-        Mockito.verify(teamRepository).findById(anyLong());
-        Mockito.verify(leagueRepository, times(0)).save(entityLeagueOneTeam);
-        
-        
-    }
-
-    @Test
-    public void testDelete() {
-        Mockito.doNothing().when(leagueRepository).delete(entityLeague);
-        
-        leagueService.delete(entityLeague);
-       
-        Mockito.verify(leagueRepository).delete(entityLeague);
     }
 
     @Test

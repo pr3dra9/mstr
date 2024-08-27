@@ -201,13 +201,13 @@ public class Match {
             return false;
         }
         final Match other = (Match) obj;
-        if (!Objects.equals(this.league, other.league)) {
+        if (!Objects.equals(this.league.getId(), other.league.getId())) {
             return false;
         }
-        if (!Objects.equals(this.homeTeam, other.homeTeam)) {
+        if (!Objects.equals(this.homeTeam.getId(), other.homeTeam.getId())) {
             return false;
         }
-        if (!Objects.equals(this.awayTeam, other.awayTeam)) {
+        if (!Objects.equals(this.awayTeam.getId(), other.awayTeam.getId())) {
             return false;
         }
         return Objects.equals(this.round, other.round);

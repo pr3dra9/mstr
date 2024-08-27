@@ -6,6 +6,8 @@ package rs.ac.bg.fon.mas.scheduler.service.impl;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
 import rs.ac.bg.fon.mas.scheduler.repository.TeamRepository;
@@ -25,7 +27,18 @@ public class TeamServiceImpl implements TeamService{
     }
     
     @Override
-    public Team save(Team team) {
+    public Page<Team> getAll(Pageable pageable) {
+        return teamRepo.findAll(pageable);
+    }
+
+    @Override
+    public Team getById(Long id) {
+        return teamRepo.findById(id)
+                .orElseThrow(()-> new EntityNotFoundException());
+    }
+    
+    @Override
+    public Team create(Team team) {
         Team searchedTeam = teamRepo.findByNameAndCountryAndCity(team.getName(), team.getCountry(), team.getCity())
                 .orElse(null);
         if (searchedTeam != null) {
@@ -36,12 +49,12 @@ public class TeamServiceImpl implements TeamService{
     }
 
     @Override
-    public Team update(Team team) {
-        teamRepo.findById(team.getId())
+    public Team update(Long id, Team team) {
+        teamRepo.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Entity with given ID does not exist!"));
+        team.setId(id);
         
         Team savedTeam = teamRepo.save(team);
-        
         return savedTeam;
     }
 
@@ -51,15 +64,6 @@ public class TeamServiceImpl implements TeamService{
             .orElseThrow(() -> new EntityNotFoundException("Entity with given ID does not exist!"));
         
         teamRepo.deleteById(id);
-        return true;
-    }
-
-    @Override
-    public boolean delete(Team team) {
-        Team entityTeam = teamRepo.findByNameAndCountryAndCity(team.getName(), team.getCountry(), team.getCity())
-            .orElseThrow(() -> new EntityNotFoundException("Entity with given name, country and city does not exist!"));
-        
-        teamRepo.deleteById(entityTeam.getId());
         return true;
     }
     
