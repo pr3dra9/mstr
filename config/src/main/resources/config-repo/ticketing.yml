@@ -20,6 +20,14 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       ddl-auto: update
     show-sql: 'true'
+  cloud:
+    function:
+      definition: matchConsumer;
+    stream:
+      bindings:
+        matchConsumer-in-0:
+          destination: match
+          content-type: application/json
 
 ---
 spring:

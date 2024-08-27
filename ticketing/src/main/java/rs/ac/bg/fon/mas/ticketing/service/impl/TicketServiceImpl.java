@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 import rs.ac.bg.fon.mas.ticketing.client.SchedulerApiClient;
 import rs.ac.bg.fon.mas.ticketing.domain.Prediction;
 import rs.ac.bg.fon.mas.ticketing.domain.Ticket;
-import rs.ac.bg.fon.mas.ticketing.domain.enums.PredictionOutcome;
 import rs.ac.bg.fon.mas.ticketing.domain.enums.PredictionStatus;
 import rs.ac.bg.fon.mas.ticketing.domain.enums.TicketStatus;
 import rs.ac.bg.fon.mas.ticketing.dto.MatchDto;
-import rs.ac.bg.fon.mas.ticketing.messaging.dto.enums.MatchOutcome;
 import rs.ac.bg.fon.mas.ticketing.repository.TicketRepository;
 import rs.ac.bg.fon.mas.ticketing.service.TicketService;
 
@@ -41,7 +39,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Ticket updateDraft(String username, Ticket ticket) {
+    public Ticket updateDraft(String username, Long id, Ticket ticket) {
         Ticket entity = repo.findById(ticket.getId()).orElseThrow(() -> new EntityNotFoundException());
         entity.setPredictions(ticket.getPredictions());
         return repo.save(entity);
@@ -75,7 +73,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Ticket updateStatus(String username, Ticket ticket) {
+    public Ticket updateStatus(String username, Long id, Ticket ticket) {
         Ticket entity = repo.findById(ticket.getId()).orElseThrow(() -> new EntityNotFoundException());
         entity.setStatus(ticket.getStatus());
         return repo.save(entity);
@@ -105,6 +103,10 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public void delete(String username, Long id) {
+        boolean exists = repo.existsById(id);
+        if (!exists)
+            throw new EntityNotFoundException();
+        
         repo.deleteById(id);
     }
 

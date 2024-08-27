@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import rs.ac.bg.fon.mas.ticketing.dto.TicketDto;
 
 /**
@@ -31,17 +30,17 @@ public interface TicketingController {
             produces = "application/json")
     public ResponseEntity<TicketDto> getById(@PathVariable Long id);
 
-    @GetMapping(value = "/by-status",
+    @GetMapping(value = "/by-status/{status}",
             produces = "application/json")
-    public ResponseEntity<List<TicketDto>> getByStatus(@RequestParam String status);
+    public ResponseEntity<List<TicketDto>> getByStatus(@PathVariable String status);
 
     @PostMapping(value = "",
             produces = "application/json")
     public ResponseEntity<TicketDto> createEmptyTicket();
     
-    @PutMapping(value = "",
+    @PutMapping(value = "/{id}",
             produces = "application/json")
-    public ResponseEntity<TicketDto> updateTicket(@RequestBody TicketDto dto);
+    public ResponseEntity<TicketDto> updateTicket(@PathVariable Long id, @RequestBody TicketDto dto);
     
     @PutMapping(value = "/{id}/submit",
             produces = "application/json")

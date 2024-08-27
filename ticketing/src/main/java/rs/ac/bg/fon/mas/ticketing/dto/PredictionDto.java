@@ -4,10 +4,8 @@
  */
 package rs.ac.bg.fon.mas.ticketing.dto;
 
-import java.util.List;
-
 /**
  *
  * @author Predrag
  */
-public record TicketDto (Long id, String username, String date, String status,List<PredictionDto> predictions) { }
+public record PredictionDto (Long id, Long matchId, String outcome, String status){ }

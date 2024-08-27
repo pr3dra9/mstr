@@ -13,9 +13,9 @@ import rs.ac.bg.fon.mas.ticketing.domain.Ticket;
  */
 public interface TicketService {
     Ticket createEmtyTicket(String username);
-    Ticket updateDraft(String username, Ticket ticket);
+    Ticket updateDraft(String username, Long id, Ticket ticket);
     Ticket submitTicket(String username, Long id);
-    Ticket updateStatus(String username, Ticket ticket);
+    Ticket updateStatus(String username, Long id, Ticket ticket);
     boolean isValid(Ticket ticket);
     
     List<Ticket> getAll(String username);

@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import rs.ac.bg.fon.mas.ticketing.domain.enums.PredictionOutcome;
 import rs.ac.bg.fon.mas.ticketing.domain.enums.PredictionStatus;
 
@@ -76,6 +77,40 @@ public class Prediction {
 
     public void setOutcome(PredictionOutcome outcome) {
         this.outcome = outcome;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.id);
+        hash = 37 * hash + Objects.hashCode(this.matchId);
+        hash = 37 * hash + Objects.hashCode(this.outcome);
+        hash = 37 * hash + Objects.hashCode(this.status);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Prediction other = (Prediction) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.matchId, other.matchId)) {
+            return false;
+        }
+        if (this.outcome != other.outcome) {
+            return false;
+        }
+        return this.status == other.status;
     }
     
 }

@@ -1,3 +1,5 @@
+## YAML Template.
+---
 spring:
   application.name: ticketing
   config.import: "optional:configserver:"
@@ -11,9 +13,11 @@ spring:
           destination: match
           content-type: application/json
 
-logging:
-  level:
-    rs.ac.bg.fon.mas.ticketing: TRACE
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9000
 
 api.scheduler.url: http://scheduler/matches/by-ids
 
@@ -21,19 +25,3 @@ api.scheduler.url: http://scheduler/matches/by-ids
 spring:
   config.activate.on-profile: docker
   cloud.config.uri: http://config:8080
-  
----
-spring:
-  config.activate.on-profile: test
-  cloud.config.enabled: false
-  datasource:
-    url: jdbc:hsqldb:mem:testdb
-    driver-class-name: org.hsqldb.jdbc.JDBCDriver
-    username: sa
-    password:
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.HSQLDialect
-
-eureka.client.enabled: false

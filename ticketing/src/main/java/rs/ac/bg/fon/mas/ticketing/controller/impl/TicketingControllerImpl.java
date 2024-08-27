@@ -7,9 +7,9 @@ package rs.ac.bg.fon.mas.ticketing.controller.impl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RestController;
 import rs.ac.bg.fon.mas.ticketing.controller.TicketingController;
 import rs.ac.bg.fon.mas.ticketing.domain.Ticket;
 import rs.ac.bg.fon.mas.ticketing.dto.TicketDto;
@@ -20,6 +20,7 @@ import rs.ac.bg.fon.mas.ticketing.service.TicketService;
  *
  * @author Predrag
  */
+@RestController
 public class TicketingControllerImpl implements TicketingController{
 
     @Autowired
@@ -57,9 +58,9 @@ public class TicketingControllerImpl implements TicketingController{
     }
 
     @Override
-    public ResponseEntity<TicketDto> updateTicket(TicketDto dto) {
+    public ResponseEntity<TicketDto> updateTicket(Long id, TicketDto dto) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Ticket entity = service.updateDraft(username, mapper.toEntity(dto));
+        Ticket entity = service.updateDraft(username, id,  mapper.toEntity(dto));
         return ResponseEntity.status(HttpStatus.OK).body(mapper.toDto(entity));
     }
 

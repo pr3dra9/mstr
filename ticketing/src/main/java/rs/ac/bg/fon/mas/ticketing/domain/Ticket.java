@@ -15,6 +15,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import rs.ac.bg.fon.mas.ticketing.domain.enums.TicketStatus;
 
 /**
@@ -97,6 +99,59 @@ public class Ticket {
 
     public void setStatus(TicketStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Objects.hashCode(this.id);
+        hash = 79 * hash + Objects.hashCode(this.username);
+        hash = 79 * hash + Objects.hashCode(this.date);
+        hash = 79 * hash + Objects.hashCode(this.status);
+        hash = 79 * hash + Objects.hashCode(this.predictions);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Ticket other = (Ticket) obj;
+        if (!Objects.equals(this.username, other.username)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        if (!Objects.equals(this.date, other.date)) {
+            return false;
+        }
+        if (this.status != other.status) {
+            return false;
+        }
+        if (this.predictions.size() != other.predictions.size()) {
+            return false;
+        }
+        
+        var sottedLiasA = this.predictions.stream().collect(Collectors.toList());
+        var sottedLiasB = other.predictions.stream().collect(Collectors.toList());
+        
+        sottedLiasA.sort((p1, p2) -> Long.compare(p1.getId(), p2.getId()));
+        sottedLiasB.sort((p1, p2) -> Long.compare(p1.getId(), p2.getId()));
+        
+        for (int i = 0; i < sottedLiasA.size(); i++) {
+            if (!sottedLiasA.get(i).equals(sottedLiasB.get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
