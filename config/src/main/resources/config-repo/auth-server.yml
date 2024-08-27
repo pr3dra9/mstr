@@ -24,6 +24,11 @@ spring:
     oauth2:
       authorizationserver:
         issuer-uri: http://localhost:9000/oauth2/issuer
+
+logging:
+  level:
+    org.springframework.security.oauth2.server.authorization: TRACE
+    
 ---
 spring:
   config:

@@ -5,12 +5,19 @@ spring:
     gateway:
       #mvc:  
         routes:       
-          - id: service_a
+          - id: scheduler
             uri: lb://scheduler
             predicates:
               - Path=/api/v1/scheduler/**
             filters:
               - RewritePath=/api/v1/scheduler/(?<remaining>.*), /${remaining}
+
+          - id: ticketing
+            uri: lb://ticketing
+            predicates:
+              - Path=/api/v1/ticketing/**
+            filters:
+              - RewritePath=/api/v1/ticketing/(?<remaining>.*), /${remaining}
               
           - id: auth_login
             uri: lb://auth-server
@@ -47,12 +54,19 @@ spring:
     gateway:
       #mvc:  
         routes:       
-          - id: service_a
-            uri: lb://service-a
+          - id: scheduler
+            uri: lb://scheduler
             predicates:
-              - Path=/api/v1/service-a/**
+              - Path=/api/v1/scheduler/**
             filters:
-              - RewritePath=/api/v1/service-a/(?<remaining>.*), /${remaining}
+              - RewritePath=/api/v1/scheduler/(?<remaining>.*), /${remaining}
+
+          - id: ticketing
+            uri: lb://ticketing
+            predicates:
+              - Path=/api/v1/ticketing/**
+            filters:
+              - RewritePath=/api/v1/ticketing/(?<remaining>.*), /${remaining}
               
           - id: auth_login
             uri: lb://auth-server
@@ -78,7 +92,6 @@ spring:
               - name: ModifyLocationHeader
                 args:
                   path: /login
-
 
 server:
   port: 8080

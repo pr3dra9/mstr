@@ -29,6 +29,9 @@ spring:
           destination: match
           content-type: application/json
 
+logging.level:
+  rs.ac.bg.fon.mas.ticketing: TRACE
+
 ---
 spring:
   config.activate.on-profile: docker
