@@ -33,6 +33,7 @@ import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
 import rs.ac.bg.fon.mas.scheduler.model.enums.MatchStatus;
+import rs.ac.bg.fon.mas.scheduler.security.config.TestSecurityConfig;
 import rs.ac.bg.fon.mas.scheduler.service.MatchService;
 
 /**
@@ -40,7 +41,7 @@ import rs.ac.bg.fon.mas.scheduler.service.MatchService;
  * @author Predrag
  */
 @WebMvcTest(controllers = MatchController.class)
-@Import({MatchMapperImpl.class, LeagueMapperImpl.class, TeamMapperImpl.class})
+@Import({MatchMapperImpl.class, LeagueMapperImpl.class, TeamMapperImpl.class, TestSecurityConfig.class})
 @TestPropertySource(properties = {
     "spring.cloud.config.enabled=false"
 })

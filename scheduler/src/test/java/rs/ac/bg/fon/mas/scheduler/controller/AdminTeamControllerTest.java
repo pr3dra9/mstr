@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import rs.ac.bg.fon.mas.scheduler.controller.mapper.impl.TeamMapperImpl;
 import rs.ac.bg.fon.mas.scheduler.dto.TeamDto;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
@@ -30,13 +31,14 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import rs.ac.bg.fon.mas.scheduler.security.config.TestSecurityConfig;
 
 /**
  *
  * @author Predrag
  */
 @WebMvcTest(controllers = AdminTeamController.class)
-@Import({TeamMapperImpl.class})
+@Import({TeamMapperImpl.class, TestSecurityConfig.class})
 @TestPropertySource(properties = {
     "spring.cloud.config.enabled=false"
 })
@@ -81,6 +83,7 @@ public class AdminTeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_getAll() throws Exception {
         var teamPage = new PageImpl<>(List.of(savedEntityTeam1, savedEntityTeam2));
         
@@ -98,6 +101,7 @@ public class AdminTeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_getById() throws Exception {
         when(service.getById(anyLong()))
                 .thenReturn(savedEntityTeam1);
@@ -111,6 +115,7 @@ public class AdminTeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_getById_notFound() throws Exception {
         when(service.getById(anyLong()))
                 .thenThrow(new EntityNotFoundException());
@@ -124,6 +129,7 @@ public class AdminTeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_create() throws Exception {
         when(service.create(entityTeam1))
                 .thenReturn(savedEntityTeam1);
@@ -139,6 +145,7 @@ public class AdminTeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_create_badRequest() throws Exception {
         when(service.create(any(Team.class)))
                 .thenThrow(new EntityExistsException());
@@ -154,6 +161,7 @@ public class AdminTeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_update() throws Exception {
         when(service.update(edited_savedDtoTeam1.id(), edited_savedEntityTeam1))
                 .thenReturn(edited_savedEntityTeam1);
@@ -169,6 +177,7 @@ public class AdminTeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_update_notFound() throws Exception {
         when(service.update(anyLong(), any(Team.class)))
                 .thenThrow(new EntityNotFoundException());
@@ -184,6 +193,7 @@ public class AdminTeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_delete() throws Exception {
         when(service.deleteById(savedDtoTeam1.id()))
                 .thenReturn(true);
@@ -197,6 +207,7 @@ public class AdminTeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_delete_notFound() throws Exception {
         when(service.deleteById(anyLong()))
                 .thenThrow(new EntityNotFoundException());

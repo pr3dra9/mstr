@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -33,6 +34,7 @@ import rs.ac.bg.fon.mas.scheduler.dto.LeagueDto;
 import rs.ac.bg.fon.mas.scheduler.dto.TeamDto;
 import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
+import rs.ac.bg.fon.mas.scheduler.security.config.TestSecurityConfig;
 import rs.ac.bg.fon.mas.scheduler.service.LeagueService;
 
 /**
@@ -40,7 +42,7 @@ import rs.ac.bg.fon.mas.scheduler.service.LeagueService;
  * @author Predrag
  */
 @WebMvcTest(controllers = AdminLeagueController.class)
-@Import({LeagueMapperImpl.class, TeamMapperImpl.class})
+@Import({LeagueMapperImpl.class, TeamMapperImpl.class, TestSecurityConfig.class})
 @TestPropertySource(properties = {
     "spring.cloud.config.enabled=false"
 })
@@ -126,6 +128,7 @@ public class AdminLeagueControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_getAll() throws Exception {
         var leaguePage = new PageImpl<>(List.of(leagueEntityRes));
         
@@ -143,6 +146,7 @@ public class AdminLeagueControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_getById() throws Exception {
         when(service.get(anyLong()))
                 .thenReturn(leagueEntityRes);
@@ -156,6 +160,7 @@ public class AdminLeagueControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_getById_NotFound() throws Exception {
         when(service.get(anyLong()))
                 .thenThrow(new EntityNotFoundException());
@@ -169,6 +174,7 @@ public class AdminLeagueControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_create() throws Exception {
         when(service.create(leagueReq))
                 .thenReturn(leagueEntityRes);
@@ -184,6 +190,7 @@ public class AdminLeagueControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_create_badRequest() throws Exception {
         when(service.create(any(League.class)))
                 .thenThrow(new EntityExistsException());
@@ -199,6 +206,7 @@ public class AdminLeagueControllerTest {
     }
     
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_update() throws Exception {
         when(service.update(editedLeagueEntityReq.getId(), editedLeagueEntityReq))
                 .thenReturn(leagueEntityRes);
@@ -214,6 +222,7 @@ public class AdminLeagueControllerTest {
     }
     
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_update_notFound() throws Exception {
         when(service.update(anyLong(), any(League.class)))
                 .thenThrow(new EntityNotFoundException());
@@ -229,6 +238,7 @@ public class AdminLeagueControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_addTeams() throws Exception  {
         when(service.addTeams(leagueEntityRes.getId(), Set.of(manutdEntity.getId(), mancityEntity.getId())))
                 .thenReturn(added_LeagueEntityRes);
@@ -245,6 +255,7 @@ public class AdminLeagueControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_addTeams_badRequest() throws Exception  {
         when(service.addTeams(anyLong(), any(Set.class)))
                 .thenThrow(new IllegalArgumentException());
@@ -260,6 +271,7 @@ public class AdminLeagueControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_addTeams_notFound() throws Exception  {
         when(service.addTeams(anyLong(), any(Set.class)))
                 .thenThrow(new EntityNotFoundException());
@@ -275,6 +287,7 @@ public class AdminLeagueControllerTest {
     }
     
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_removeTeams() throws Exception {
         when(service.removeTeams(leagueEntityRes.getId(), Set.of(arsenalEntity.getId())))
                 .thenReturn(removed_leagueEntityRes);
@@ -291,6 +304,7 @@ public class AdminLeagueControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_removeTeams_notFound() throws Exception  {
         when(service.removeTeams(anyLong(), any(Set.class)))
                 .thenThrow(new EntityNotFoundException());
@@ -306,6 +320,7 @@ public class AdminLeagueControllerTest {
     }
     
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_replaceTeams() throws Exception  {
         when(service.replaceTeams(leagueEntityRes.getId(), Set.of(manutdEntity.getId(), mancityEntity.getId())))
                 .thenReturn(replaced_LeagueEntityRes);
@@ -322,6 +337,7 @@ public class AdminLeagueControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_replaceTeams_notFound() throws Exception  {
         when(service.replaceTeams(anyLong(), any(Set.class)))
                 .thenThrow(new EntityNotFoundException());
@@ -337,6 +353,7 @@ public class AdminLeagueControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_replaceTeams_badRequest() throws Exception  {
         when(service.replaceTeams(anyLong(), any(Set.class)))
                 .thenThrow(new IllegalArgumentException());

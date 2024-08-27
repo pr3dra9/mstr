@@ -64,6 +64,11 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-stream-binder-kafka</artifactId>
         </dependency>
+        <!-- OAuth2 Resource Server -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+        </dependency>
         <!-- Spring Cloud Config Client -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -95,6 +100,14 @@
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.0.2</version>
+            <type>jar</type>
+        </dependency>
+        <!-- Spring Security Test -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+            <version>6.3.3</version>
             <type>jar</type>
         </dependency>
     </dependencies>

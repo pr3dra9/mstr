@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -41,6 +42,7 @@ import rs.ac.bg.fon.mas.scheduler.model.League;
 import rs.ac.bg.fon.mas.scheduler.model.Match;
 import rs.ac.bg.fon.mas.scheduler.model.Team;
 import rs.ac.bg.fon.mas.scheduler.model.enums.MatchStatus;
+import rs.ac.bg.fon.mas.scheduler.security.config.TestSecurityConfig;
 import rs.ac.bg.fon.mas.scheduler.service.MatchService;
 
 /**
@@ -48,7 +50,7 @@ import rs.ac.bg.fon.mas.scheduler.service.MatchService;
  * @author Predrag
  */
 @WebMvcTest(controllers = AdminMatchController.class)
-@Import({MatchMapperImpl.class, LeagueMapperImpl.class, TeamMapperImpl.class})
+@Import({MatchMapperImpl.class, LeagueMapperImpl.class, TeamMapperImpl.class, TestSecurityConfig.class})
 @TestPropertySource(properties = {
     "spring.cloud.config.enabled=false"
 })
@@ -113,6 +115,7 @@ public class AdminMatchControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_getAll() throws Exception {
         PageRequest pageReq = PageRequest.of(0, 2);
         Page<Match> pageDtoMatches = new PageImpl<>(List.of(savedEntityDerbi1, savedEntityDerbi2));
@@ -131,6 +134,7 @@ public class AdminMatchControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_getById() throws Exception {
         Mockito.when(service.getById(savedDtoDerbi1.id()))
                 .thenReturn(savedEntityDerbi1);
@@ -142,6 +146,7 @@ public class AdminMatchControllerTest {
     }
     
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_getById_notFound() throws Exception {
         Mockito.when(service.getById(anyLong()))
                 .thenThrow(new EntityNotFoundException());
@@ -153,6 +158,7 @@ public class AdminMatchControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_create() throws Exception {
         Mockito.when(service.create(newEntityDerbi1))
                 .thenReturn(savedEntityDerbi1);
@@ -168,6 +174,7 @@ public class AdminMatchControllerTest {
     }
     
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_create_badRequest() throws Exception {
         Mockito.when(service.create(any(Match.class)))
                 .thenThrow(new EntityExistsException());
@@ -183,6 +190,7 @@ public class AdminMatchControllerTest {
     }
     
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_update() throws Exception {
         Mockito.when(service.update(editedDtoDerbi1.id(), editedEntityDerbi1))
                 .thenReturn(editedEntityDerbi1);
@@ -198,6 +206,7 @@ public class AdminMatchControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_update_notFound() throws Exception {
         Mockito.when(service.update(anyLong(), any(Match.class)))
                 .thenThrow(new EntityNotFoundException());
@@ -213,6 +222,7 @@ public class AdminMatchControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test-user", roles = {"ADMIN"})
     public void test_delete() throws Exception {
         Mockito.doNothing()
                 .when(service).delete(editedDtoDerbi1.id());
