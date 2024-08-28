@@ -8,17 +8,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import rs.ac.bg.fon.mas.match_feed.domain.EventCounter;
 
 /**
  *
  * @author Predrag
  */
-@SpringBootTest
-@ActiveProfiles("test")
+@DataJpaTest
+@TestPropertySource(properties = {
+    "spring.cloud.config.enabled=false"
+})
 public class EventCounterRepositoryTest {
     
     @Autowired

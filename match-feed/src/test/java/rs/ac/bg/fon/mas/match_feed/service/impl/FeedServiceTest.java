@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package rs.ac.bg.fon.mas.match_feed.service;
+package rs.ac.bg.fon.mas.match_feed.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +27,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 import rs.ac.bg.fon.mas.match_feed.dto.Response;
 import rs.ac.bg.fon.mas.match_feed.dto.Root;
+import rs.ac.bg.fon.mas.match_feed.service.FeedService;
+import rs.ac.bg.fon.mas.match_feed.service.FeedService;
 
 /**
  *
