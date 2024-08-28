@@ -4,6 +4,8 @@
  */
 package rs.ac.bg.fon.mas.match_feed.service.impl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +44,9 @@ public class FeedServiceImpl implements FeedService {
     @Value("${api.endpoints.get-matches}")
     private String matchEndpoint;
 
+    @Value("${api.endpoints.get-finished-matches}")
+    private String finishedMatchEndpoint;
+    
     @Override
     public List<Response> fetchFeed() {
         String url = baseUrl + matchEndpoint;
@@ -68,4 +73,39 @@ public class FeedServiceImpl implements FeedService {
         return List.of();
     }
 
+    @Override
+    public List<Response> fetchFinished() {
+        String url = baseUrl + finishedMatchEndpoint + getTodayDate();
+        logger.trace("fetchFinished -> url: " + url);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(keyName, keyValue);
+        headers.set("Accept", "application/json");
+        
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        
+        ResponseEntity<Root> responseEntity = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            entity,
+            Root.class
+        );
+
+        Root root = responseEntity.getBody();
+        
+        if (root != null) {
+            logger.trace("fetchFeed -> root: " + root.toString());
+            return root.response;
+        }
+        
+        logger.trace("fetchFeed -> root is empty");
+        return List.of();
+    }
+
+    private String getTodayDate() {
+        LocalDate today = LocalDate.now();
+        String formattedDate = today.format(DateTimeFormatter.ISO_LOCAL_DATE);
+        return formattedDate;
+    }
+    
 }

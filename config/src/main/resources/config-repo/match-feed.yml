@@ -39,6 +39,7 @@ api:
   base-url: https://v3.football.api-sports.io
   endpoints:
     get-matches: /fixtures?live=all
+    get-finished-matches: /fixtures?status=ft-aet-pen&date=
 
 ---
 spring:

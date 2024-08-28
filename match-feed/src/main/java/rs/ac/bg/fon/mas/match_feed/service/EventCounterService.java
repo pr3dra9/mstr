@@ -13,4 +13,6 @@ import rs.ac.bg.fon.mas.match_feed.domain.EventCounter;
 public interface EventCounterService {
     public int getCounter(Long uuid);
     public EventCounter saveEventCounter(EventCounter counter);
+    public boolean isFinished(Long uuid);
+    public boolean setFinished(Long uuid);
 }

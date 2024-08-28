@@ -34,3 +34,4 @@ api:
   base-url: test
   endpoints:
     get-matches: test
+    get-finished-matches: test

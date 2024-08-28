@@ -45,8 +45,13 @@ public class StreamConfig {
     @PollableBean
     public Supplier<Flux<EventMassage>> eventSupplier() {
         return () -> {
-            return Flux.fromIterable(feedService.fetchFeed())
+            Flux<EventMassage> matches =  Flux.fromIterable(feedService.fetchFinished())
+                    .flatMap(this::toMatchMessages);
+            
+            Flux<EventMassage> events =  Flux.fromIterable(feedService.fetchFeed())
                     .flatMap(this::toEventMessages);
+            
+            return matches.mergeWith(events);
         };
     }
     
@@ -98,4 +103,46 @@ public class StreamConfig {
         return eventMassages;
     }
     
+    private Flux<EventMassage> toMatchMessages(Response response) {
+        logger.trace("toMatchMessages -> Response: " + response.toString());
+
+        if (service.isFinished(response.fixture.id)) {
+            return Flux.empty();
+        }
+
+        EventFixture fixture = new EventFixture(
+                response.fixture.id,
+                response.fixture.status.statusShort,
+                response.fixture.status.elapsed);
+        logger.trace("toMatchMessages -> MsgFixture: " + fixture.toString());
+
+        EventLeague league = new EventLeague(
+                response.league.name,
+                response.league.country,
+                response.league.round);
+        logger.trace("toMatchMessages -> MsgLeague: " + league.toString());
+
+        EventTeams teams = new EventTeams(
+                response.teams.home.name,
+                response.teams.away.name);
+        logger.trace("toMatchMessages -> MsgTeams: " + teams.toString());
+
+        EventGoals goals = new EventGoals(
+                response.goals.home,
+                response.goals.away);
+        logger.trace("toMatchMessages -> MsgGoals: " + goals.toString());
+
+        Flux<EventMassage> matchMessage = Flux.just(
+                new EventMassage(
+                        fixture,
+                        league,
+                        teams,
+                        goals
+                        ,null));
+
+        service.setFinished(response.fixture.id);
+
+        return matchMessage;
+    }
+
 }

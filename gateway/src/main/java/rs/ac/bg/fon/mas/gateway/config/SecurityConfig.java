@@ -26,6 +26,7 @@ public class SecurityConfig {
             .authorizeExchange((authorize) -> authorize
                 .pathMatchers("/login").permitAll()
                 .pathMatchers("/oauth2/**").permitAll()
+                .pathMatchers("/api/v1/scheduler/matches/**").permitAll()
                 .anyExchange().authenticated()
             )
             

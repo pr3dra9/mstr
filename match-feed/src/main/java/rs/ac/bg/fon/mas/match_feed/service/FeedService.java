@@ -13,4 +13,5 @@ import rs.ac.bg.fon.mas.match_feed.dto.Response;
  */
 public interface FeedService {
     List<Response> fetchFeed();
+    List<Response> fetchFinished();
 }

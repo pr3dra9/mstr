@@ -22,6 +22,7 @@ public class EventCounter {
     private Long id;
     private Long uuid;
     private int counter; 
+    private boolean finished;
 
     public EventCounter() {
     }
@@ -29,14 +30,29 @@ public class EventCounter {
     public EventCounter(Long uuid, int counter) {
         this.uuid = uuid;
         this.counter = counter;
+        this.finished = false;
+    }
+
+    public EventCounter(Long uuid, int counter, boolean finished) {
+        this.uuid = uuid;
+        this.counter = counter;
+        this.finished = finished;
     }
     
     public EventCounter(Long id, Long uuid, int counter) {
         this.id = id;
         this.uuid = uuid;
         this.counter = counter;
+        this.finished = false;
     }
 
+    public EventCounter(Long id, Long uuid, int counter, boolean finished) {
+        this.id = id;
+        this.uuid = uuid;
+        this.counter = counter;
+        this.finished = finished;
+    }
+    
     public int getCounter() {
         return counter;
     }
@@ -61,6 +77,14 @@ public class EventCounter {
         this.uuid = uuid;
     }
 
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }    
+    
     @Override
     public String toString() {
         return "EventCounter{" + "id=" + id + ", uuid=" + uuid + ", counter=" + counter + '}';
@@ -69,8 +93,10 @@ public class EventCounter {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 67 * hash + Objects.hashCode(this.uuid);
-        hash = 67 * hash + this.counter;
+        hash = 61 * hash + Objects.hashCode(this.id);
+        hash = 61 * hash + Objects.hashCode(this.uuid);
+        hash = 61 * hash + this.counter;
+        hash = 61 * hash + (this.finished ? 1 : 0);
         return hash;
     }
 
@@ -87,6 +113,12 @@ public class EventCounter {
         }
         final EventCounter other = (EventCounter) obj;
         if (this.counter != other.counter) {
+            return false;
+        }
+        if (this.finished != other.finished) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
             return false;
         }
         return Objects.equals(this.uuid, other.uuid);

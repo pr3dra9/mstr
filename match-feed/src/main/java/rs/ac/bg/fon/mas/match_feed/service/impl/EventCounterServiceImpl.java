@@ -42,5 +42,27 @@ public class EventCounterServiceImpl implements EventCounterService {
         dbCounter.setCounter(counter.getCounter());
         return repo.save(dbCounter);
     }
+
+    @Override
+    public boolean isFinished(Long uuid) {
+        logger.trace("isFinished -> uuid: " + uuid);
+        EventCounter counter = repo.findByUuid(uuid).orElse(null);
+        if (counter == null)
+            return false;
+        return counter.isFinished();
+    }
+    
+    @Override
+    public boolean setFinished(Long uuid) {
+        logger.trace("setFinished -> uuid: " + uuid);
+        EventCounter counter = repo.findByUuid(uuid).orElse(null);
+        if (counter == null) {
+            counter = new EventCounter(uuid, 0, true);
+        } else {
+            counter.setFinished(true);
+        }
+        repo.save(counter);
+        return counter.isFinished();
+    }
     
 }
