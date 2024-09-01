@@ -4,8 +4,6 @@
  */
 package rs.ac.bg.fon.mas.scheduler.dto;
 
-import java.time.LocalDateTime;
-
 /**
  *
  * @author Predrag
@@ -21,4 +19,3 @@ public record MatchDto (
     int homeTeamGoals,
     int awayTeamGoals){
 }
-

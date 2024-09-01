@@ -104,6 +104,12 @@
             <version>6.3.3</version>
             <type>jar</type>
         </dependency>
+        <!-- Spring Cloud Contract Stub Runner -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>

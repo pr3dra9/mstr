@@ -29,6 +29,7 @@
     <properties>
         <java.version>21</java.version>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
+        <spring-cloud-contract.version>4.1.4</spring-cloud-contract.version>
     </properties>
     <dependencies>
         <!-- SpringDoc OpenAPI Starter WebMVC UI -->
@@ -110,6 +111,12 @@
             <version>6.3.3</version>
             <type>jar</type>
         </dependency>
+        <!-- Spring Cloud Contract Verifier -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-contract-verifier</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -128,6 +135,16 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-contract-maven-plugin</artifactId>
+                <version>${spring-cloud-contract.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <testFramework>JUNIT5</testFramework>
+                    <baseClassForTests>rs.ac.bg.fon.mas.scheduler.contract.test.BaseTestClass</baseClassForTests> 
+                </configuration>
             </plugin>
         </plugins>
     </build>
