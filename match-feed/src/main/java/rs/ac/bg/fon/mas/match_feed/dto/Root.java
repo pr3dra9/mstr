@@ -19,5 +19,12 @@ public class Root {
     public String toString() {
         return "Root{" + "response=" + response + '}';
     }
+
+    public Root() {
+    }
+
+    public Root(ArrayList<Response> response) {
+        this.response = response;
+    }
     
 }

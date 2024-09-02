@@ -19,6 +19,15 @@ public class FixtureStatus {
     
     public int elapsed;
 
+    public FixtureStatus() {
+    }
+    
+    public FixtureStatus(String statusLong, String statusShort, int elapsed) {
+        this.statusLong = statusLong;
+        this.statusShort = statusShort;
+        this.elapsed = elapsed;
+    }
+    
     @Override
     public String toString() {
         return "FixtureStatus{" + "statusLong=" + statusLong + ", statusShort=" + statusShort + ", elapsed=" + elapsed + '}';

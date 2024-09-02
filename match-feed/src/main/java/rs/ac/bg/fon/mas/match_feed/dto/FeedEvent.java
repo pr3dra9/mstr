@@ -34,7 +34,6 @@ public class FeedEvent {
         player = playerObj.get("name");
     }
     
-    
     @JsonCreator
     public FeedEvent(//@JsonProperty("time.time") Integer time,
             //@JsonProperty("team.name") String team,
@@ -43,6 +42,16 @@ public class FeedEvent {
         //this.time = time;
         //this.team = team;
         //this.player = player;
+        this.type = type;
+    }
+
+    public FeedEvent() {
+    }
+
+    public FeedEvent(Integer time, String team, String player, String type) {
+        this.time = time;
+        this.team = team;
+        this.player = player;
         this.type = type;
     }
 

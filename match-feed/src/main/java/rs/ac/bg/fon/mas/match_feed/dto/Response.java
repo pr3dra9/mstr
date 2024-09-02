@@ -18,6 +18,18 @@ public class Response {
     public Score score;
     public ArrayList<FeedEvent> events;
 
+    public Response() {
+    }
+
+    public Response(Fixture fixture, League league, Teams teams, Goals goals, Score score, ArrayList<FeedEvent> events) {
+        this.fixture = fixture;
+        this.league = league;
+        this.teams = teams;
+        this.goals = goals;
+        this.score = score;
+        this.events = events;
+    }
+
     @Override
     public String toString() {
         return "Response{" + "fixture=" + fixture + ", league=" + league + ", teams=" + teams + ", goals=" + goals + ", score=" + score + ", events=" + events + '}';
