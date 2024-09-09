@@ -80,7 +80,7 @@ services:
       KAFKA_LISTENERS: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:9093
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      #KAFKA_CREATE_TOPICS: "a2CreateRequest:1:1,a2CreateResponse:1:1,a2UpdateRequest:1:1,a2UpdateResponse:1:1,a2DeleteRequest:1:1,a2DeleteResponse:1:1"
+      KAFKA_CREATE_TOPICS: "matchEvent:2:1,matchCompletion:1:1"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
@@ -130,8 +130,8 @@ services:
         condition: service_healthy
       discovery:
         condition: service_healthy
-    ports:
-      - "81:8080"
+    #ports:
+    #  - "81:8080"
     restart: unless-stopped
     environment:
       - SPRING_PROFILES_ACTIVE=docker
