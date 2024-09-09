@@ -37,8 +37,9 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         //.requestMatchers("/api/v1/**").hasAuthority("SCOPE_profile1")
-                        .requestMatchers("/tickets/**").hasRole("USER")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/tickets/**").authenticated()
+                        .requestMatchers("/tickets/**").hasRole("USER")                        
+                        .anyRequest().permitAll()
                 )
                 .exceptionHandling((handlingSpec) -> handlingSpec
                    .accessDeniedHandler(accessDeniedHandler)

@@ -6,11 +6,11 @@ spring:
   cloud:
     config.uri: http://localhost:8888
     function:
-      definition: matchConsumer;
+      definition: matchConsumer
     stream:
       bindings:
         matchConsumer-in-0:
-          destination: match
+          destination: matchCompletion
           content-type: application/json
 
   security:

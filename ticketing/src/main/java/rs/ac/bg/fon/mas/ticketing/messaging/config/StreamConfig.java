@@ -34,7 +34,7 @@ public class StreamConfig {
     PredictionService predictionService;
     
     @Bean
-    public Consumer<MatchMassage> eventConsumer() {
+    public Consumer<MatchMassage> matchConsumer() {
         return this::processMessage;
     }
         

@@ -216,8 +216,8 @@ public class TicketingControllerTest {
                 .perform(MockMvcRequestBuilders.put("/tickets/{id}", String.valueOf(entityTicket1.getId()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(dtoTicket1)))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-                //.andExpect(MockMvcResultMatchers.jsonPath("$.size()", Matchers.is(2)));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.predictions.size()", Matchers.is(3)));
         
         verify(service).updateDraft(username,entityTicket1.getId(), entityTicket1);
     }

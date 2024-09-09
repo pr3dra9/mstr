@@ -41,7 +41,8 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public Ticket updateDraft(String username, Long id, Ticket ticket) {
         Ticket entity = repo.findById(ticket.getId()).orElseThrow(() -> new EntityNotFoundException());
-        entity.setPredictions(ticket.getPredictions());
+        entity.getPredictions().clear();
+        entity.getPredictions().addAll(ticket.getPredictions());
         return repo.save(entity);
     }
 
