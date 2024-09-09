@@ -88,6 +88,7 @@ public class StreamConfig {
         
         List<FeedEvent> newEvents = response.events.subList(sentEvents, totalEvents);
         logger.trace("toEventMessages -> newEvents: " + newEvents.toString());
+        logger.debug("toEventMessages -> Fixture with {} new events", newEvents.size());
         
         Flux<EventMassage> eventMassages = Flux.fromIterable(newEvents)
                 .map(event -> new EventMassage(
@@ -141,7 +142,9 @@ public class StreamConfig {
                         ,null));
 
         service.setFinished(response.fixture.id);
-
+        
+        logger.debug("toMatchMessages -> Finished fixture: {} - {}", teams.getHome(), teams.getAway());
+        
         return matchMessage;
     }
 

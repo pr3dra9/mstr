@@ -50,7 +50,7 @@ public class FeedServiceImpl implements FeedService {
     @Override
     public List<Response> fetchFeed() {
         String url = baseUrl + matchEndpoint;
-        logger.trace("fetchFeed -> url: " + url);
+        logger.debug("fetchFeed -> URL: " + url);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(keyName, keyValue);
@@ -76,7 +76,7 @@ public class FeedServiceImpl implements FeedService {
     @Override
     public List<Response> fetchFinished() {
         String url = baseUrl + finishedMatchEndpoint + getTodayDate();
-        logger.trace("fetchFinished -> url: " + url);
+        logger.debug("fetchFinished -> URL: " + url);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(keyName, keyValue);
