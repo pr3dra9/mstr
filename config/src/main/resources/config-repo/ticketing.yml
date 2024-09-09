@@ -26,8 +26,9 @@ spring:
     stream:
       bindings:
         matchConsumer-in-0:
-          destination: match
+          destination: matchCompletion
           content-type: application/json
+          group: ticketing
 
 logging.level:
   rs.ac.bg.fon.mas.ticketing: TRACE

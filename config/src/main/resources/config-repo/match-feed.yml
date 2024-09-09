@@ -19,7 +19,7 @@ spring:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       ddl-auto: update
-    show-sql: 'true'
+    show-sql: 'false'
   cloud:
     stream:
       poller.fixed-delay: 120000
@@ -30,7 +30,15 @@ spring:
 
 logging:
   level:
-    rs.ac.bg.fon.mas.match_feed: TRACE
+    org.springframework: OFF
+    org.apache.catalina: OFF
+    org.apache.kafka: OFF
+    org.hibernate: OFF
+    com.zaxxer.hikari: OFF
+    com.netflix.discovery: OFF
+    rs.ac.bg.fon.mas.match_feed: OFF
+    rs.ac.bg.fon.mas.match_feed.messaging.config: DEBUG
+    rs.ac.bg.fon.mas.match_feed.service: DEBUG
 
 api:
   key:

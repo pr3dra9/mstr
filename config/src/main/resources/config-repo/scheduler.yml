@@ -19,7 +19,30 @@ spring:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       ddl-auto: update
-    show-sql: 'true'
+    show-sql: 'false'
+  cloud:
+    function:
+      definition: eventConsumer;
+    stream:
+      bindings:
+        eventConsumer-in-0:
+          destination: matchEvent
+          content-type: application/json
+          group: scheduler
+        matchCompletion-out-0:
+          destination: matchCompletion
+          content-type: application/json
+
+logging:
+  level:
+    org.springframework: OFF
+    org.apache.catalina: OFF
+    org.apache.kafka: OFF
+    org.hibernate: OFF
+    com.zaxxer.hikari: OFF
+    com.netflix.discovery: OFF
+    rs.ac.bg.fon.mas.scheduler: OFF
+    rs.ac.bg.fon.mas.scheduler.messaging.config: TRACE
 
 ---
 spring:

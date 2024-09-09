@@ -12,6 +12,7 @@ spring:
         eventConsumer-in-0:
           destination: matchEvent
           content-type: application/json
+          group: scheduler
         matchCompletion-out-0:
           destination: matchCompletion
           content-type: application/json
