@@ -83,6 +83,9 @@ public class StreamConfig {
     private void processMatchEvent(Match match, EventMassage eventMssg) {
         EventInfo info = eventMssg.getInfo();
 
+        if (info == null)
+            return;
+        
         MatchEvent event = new MatchEvent(
                 match,
                 toMatchEventType(info.getType()),

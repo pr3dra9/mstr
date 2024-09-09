@@ -37,6 +37,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         //.requestMatchers("/api/v1/**").hasAuthority("SCOPE_profile1")
+                        .requestMatchers("/admin/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )
