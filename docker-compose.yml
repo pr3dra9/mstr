@@ -205,6 +205,8 @@ services:
   match-feed:
     #container_name: "mstr-match-feed"
     image: "match-feed:0.0.1"
+    extra_hosts:
+      - "v3.football.api-sports.io:94.237.40.73"
     depends_on:
       match-feed-db:
         condition: service_healthy

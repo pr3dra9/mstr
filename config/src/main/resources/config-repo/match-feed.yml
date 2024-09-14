@@ -46,8 +46,8 @@ api:
     value: a8cc6f5d9b76fd9fec768502c57ef8f1
   base-url: https://v3.football.api-sports.io
   endpoints:
-    get-matches: /fixtures?live=all
-    get-finished-matches: /fixtures?status=ft-aet-pen&date=
+    get-matches: /fixtures?live=39-39-39
+    get-finished-matches: /fixtures?league=39&season=2024&status=ft-aet-pen&date=
 
 ---
 spring:

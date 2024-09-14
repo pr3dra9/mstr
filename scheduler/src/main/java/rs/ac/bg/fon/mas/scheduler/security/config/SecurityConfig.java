@@ -36,8 +36,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                        //.requestMatchers("/api/v1/**").hasAuthority("SCOPE_profile1")
-                        .requestMatchers("/admin/**").authenticated()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
                 )

@@ -4,6 +4,7 @@
 
 FROM alpine/java:21.0.3-jre
 RUN apk update && apk add --no-cache curl ca-certificates
+RUN update-ca-certificates
 RUN mkdir app
 ADD target/match-feed-0.0.1-SNAPSHOT.jar app/app.jar
 EXPOSE 8080
