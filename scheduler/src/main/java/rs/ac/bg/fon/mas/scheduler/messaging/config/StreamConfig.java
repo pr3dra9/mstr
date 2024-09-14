@@ -4,6 +4,7 @@
  */
 package rs.ac.bg.fon.mas.scheduler.messaging.config;
 
+import java.util.List;
 import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +84,7 @@ public class StreamConfig {
     private void processMatchEvent(Match match, EventMassage eventMssg) {
         EventInfo info = eventMssg.getInfo();
 
-        if (info == null)
+        if (List.of("ft", "aet", "pen", "FT", "AET", "PEN").contains(eventMssg.getFixture().getFixtureStatusShort()))
             return;
         
         MatchEvent event = new MatchEvent(
@@ -102,14 +103,30 @@ public class StreamConfig {
         return switch (type) {
             case "Goal" ->
                 MatchEventType.GOAL;
-            case "Card" ->
+            case "Card", "Yellow Card" ->
                 MatchEventType.YELLOW_CARD;
-            case "Subst" ->
+            case "Subst", "Substitution", "subst" ->
                 MatchEventType.SUBSTITUTION;
             case "Var" ->
                 MatchEventType.VAR;
+            case "Red Card" ->
+                MatchEventType.RED_CARD;
+            case "Penalty" ->
+                MatchEventType.PENALTY;
+            case "Foul" ->
+                MatchEventType.FOUL;
+            case "Offside" ->
+                MatchEventType.OFFSIDE;
+            case "Corner Kick" ->
+                MatchEventType.CORNER_KICK;
+            case "Free Kick" ->
+                MatchEventType.FREE_KICK;
+            case "Halftime" ->
+                MatchEventType.HALFTIME;
+            case "Full Time" ->
+                MatchEventType.FULLTIME;
             default ->
-                null;
+                MatchEventType.UNKNOWN;
         };
     }
     
